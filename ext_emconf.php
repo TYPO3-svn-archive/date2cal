@@ -15,9 +15,9 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Extends all backend date/datetime fields with a calendar (http://www.dynarch.com/projects/calendar). The calendar provides an additional natural language parsing mode (http://datetime.toolbocks.com/). Also it offers a small API to use the calendar in other extensions too.',
 	'category' => 'be',
 	'shy' => 0,
-	'version' => '7.1.0',
+	'version' => '7.1.1dev',
 	'dependencies' => '',
-	'conflicts' => 'erotea_date2cal',
+	'conflicts' => 'erotea_date2cal,kj_becalendar',
 	'priority' => 'bottom',
 	'loadOrder' => '',
 	'module' => '',
@@ -39,6 +39,7 @@ $EM_CONF[$_EXTKEY] = array(
 		),
 		'conflicts' => array(
 			'erotea_date2cal' => '',
+			'kj_becalendar' => '',
 		),
 		'suggests' => array(
 		),
