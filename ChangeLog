@@ -1,4 +1,9 @@
 07-04-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	* 7.1.1: added kj_becalendar to the ignore list (Thanks to Thomas Kofler)
+	* 7.1.1: fixed popup problem with IE7 (Thanks to Patrick Gaumond)
+	* 7.1.1: updated manual
+
+07-04-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	RELEASE OF VERSION 7.1.0
 	* 7.1.0: fixed problem with first day of week
 	* 7.1.0: added attention of global extension configuration in the date2cal API
