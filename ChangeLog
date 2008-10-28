@@ -3,6 +3,8 @@
 	* 7.1.1: fixed warning in ext_tables.php if a TCA table has an empty columns section
 	* 7.1.1: fixed an issue with duplicate input id generation with flexforms (md5ID is used now)
 	* 7.1.1: deactivate secOptionsAlwaysOn (not needed anymore) and datetime (never worked) option by default
+	* 7.1.1: added improved french translation (Thanks to Christophe Marcoccia)
+	* 7.1.1: renamed the chinese language file to start working
 	* 7.1.1: updated manual
 
 27-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
