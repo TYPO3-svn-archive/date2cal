@@ -76,7 +76,7 @@ class tx_date2cal_wizard {
 		}
 
 		// add id attributes
-		$inputId = 'data_' . $params['table'] . '_' . $params['uid'] . '_' . $params['field'];
+		$inputId = 'data_' . $params['md5ID'];
 		$params['item'] = str_replace('<input type="checkbox"', '<input type="checkbox" ' .
 			'id="' . $inputId . '_cb"', $params['item']);
 		$params['item'] = str_replace('<input type="text"', '<input type="text" ' .

@@ -25,16 +25,16 @@
 require_once(t3lib_extMgm::extPath('date2cal') . 'src/class.tx_date2cal_shared.php');
 
 /**
- * Contains a hook for flexform manipulation (adding of calendar wizard)
+ * Contains a hook for flexform manipulation (adding of the calendar wizard)
  *
  * @author  Stefan Galinski <stefan.galinski@gmail.com>
  */
 class tx_date2cal_befunc {
 	/**
 	 * Hook for manipulating flexform fields
-	 * Its needed to add the calendar wizard.
+	 * It's needed to add the calendar wizard.
 	 *
-	 * @param array $dataStructArray flexform value (array of xml file)
+	 * @param array $dataStructArray flexform information
 	 * @param array $conf configuration of flexform fields (not needed)
 	 * @param array $row flexform informations of special file (not needed)
 	 * @param string $table table (not needed)
@@ -52,7 +52,7 @@ class tx_date2cal_befunc {
 	/**
 	 * Manipulates flexforms without tabs...
 	 *
-	 * @param array $dataStructArray flexform value (array of xml file)
+	 * @param array $dataStructArray flexform information
 	 * @return void
 	 */
 	function flexformNoTabs(&$dataStructArray) {
@@ -64,14 +64,17 @@ class tx_date2cal_befunc {
 			}
 
 			// add wizard
-			tx_date2cal_shared::addWizard($dataStructArray['ROOT']['el'][$field]['TCEforms'], $type);
+			tx_date2cal_shared::addWizard(
+				$dataStructArray['ROOT']['el'][$field]['TCEforms'],
+				$type
+			);
 		}
 	}
 
 	/**
 	 * Manipulates flexforms with tabs...
 	 *
-	 * @param array $dataStructArray flexform value (array of xml file)
+	 * @param array $dataStructArray flexform information
 	 * @return void
 	 */
 	function flexformTabbed(&$dataStructArray) {
@@ -86,7 +89,8 @@ class tx_date2cal_befunc {
 
 				// add wizard
 				tx_date2cal_shared::addWizard(
-					$dataStructArray['sheets'][$sheet]['ROOT']['el'][$field]['TCEforms'], $type
+					$dataStructArray['sheets'][$sheet]['ROOT']['el'][$field]['TCEforms'],
+					$type
 				);
 			}
 		}

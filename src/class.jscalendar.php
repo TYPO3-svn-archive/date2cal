@@ -70,7 +70,7 @@ class JSCalendar {
 		$this->config['absPath'] = t3lib_extMgm::extPath('date2cal');
 
 		// set variable with the language object
-		$this->lang = TYPO3_MODE == 'FE' ? $GLOBALS['TSFE'] : $GLOBALS['LANG'];
+		$this->lang = (TYPO3_MODE == 'FE' ? $GLOBALS['TSFE'] : $GLOBALS['LANG']);
 
 		// read global date2cal configuration
 		$this->extConfig = $this->readGlobalConfig();
@@ -159,8 +159,8 @@ class JSCalendar {
 	 */
 	function renderImages($calImg = '', $helpImg = '') {
 		// check images
-		$calImg = ($calImg == '') ? $this->extConfig['calImg'] : $calImg;
-		$helpImg = ($helpImg == '') ? $this->extConfig['helpImg'] : $helpImg;
+		$calImg = ($calImg == '' ? $this->extConfig['calImg'] : $calImg);
+		$helpImg = ($helpImg == '' ? $this->extConfig['helpImg'] : $helpImg);
 
 		// vertical alignment
 		$valign = TYPO3_MODE == 'FE' ? 'vertical-align: middle;' : '';

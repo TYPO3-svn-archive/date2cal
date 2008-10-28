@@ -35,7 +35,7 @@ class tx_date2cal_shared {
 	 * @return mixed "date", "datetime" or boolean false if its not a date or datetime field
 	 */
 	function isDateOrDateTime($field) {
-		if ($field['type'] != 'input' || $field['eval'] == '') {
+		if ($field['type'] != 'input') {
 			return false;
 		}
 
@@ -43,9 +43,7 @@ class tx_date2cal_shared {
 		$eval = explode(',', $field['eval']);
 		if (in_array('date', $eval)) {
 			return 'date';
-		}
-
-		if (in_array('datetime', $eval)) {
+		} elseif (in_array('datetime', $eval)) {
 			return 'datetime';
 		}
 
