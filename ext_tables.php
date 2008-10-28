@@ -22,11 +22,11 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-if (!defined('TYPO3_MODE'))
+if (!defined('TYPO3_MODE')) {
 	die('Access denied.');
+}
 
-if (!class_exists('tx_date2cal_extTables'))
-{
+if (!class_exists('tx_date2cal_extTables')) {
 
 require_once(t3lib_extMgm::extPath('date2cal') . 'src/class.tx_date2cal_shared.php');
 
@@ -53,22 +53,23 @@ class tx_date2cal_extTables
 	 *
 	 * @return void
 	 */
-	function tx_date2cal_extTables()
-	{
+	function tx_date2cal_extTables() {
 		// init variables and configuration
 		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['date2cal']);
 		$this->extConf['extCache'] = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extCache'];
 
 		// convert end/start fields to evaluate also times
-		if ($this->extConf['datetime'])
+		if ($this->extConf['datetime']) {
 			$this->tx_date2cal_toDatetime();
+		}
 
 		// add wizards to all date and datetime fields
 		$this->tx_date2cal_setWizard();
 
 		// write cache file (only if the cache file was loaded already and caching is enabled)
-		if ($this->extConf['extCache'] && $this->extConf['doCache'])
+		if ($this->extConf['extCache'] && $this->extConf['doCache']) {
 			$this->tx_date2cal_writeCacheFile();
+		}
 	}
 
 	/**
@@ -78,8 +79,9 @@ class tx_date2cal_extTables
 	 */
 	function tx_date2cal_writeCacheFile() {
 		$tca = '';
-		foreach($this->tcaTables as $tcaTable)
+		foreach($this->tcaTables as $tcaTable) {
 			$tca .= 't3lib_div::loadTCA(\'' . $tcaTable . '\');' . "\n";
+		}
 
 		$this->cache = "&lt;?php\n" . $tca . $this->cache . "?&gt;\n";
 		t3lib_div::writeFile(PATH_site . 'typo3temp/date2cal_cache.php',
@@ -91,21 +93,23 @@ class tx_date2cal_extTables
 	 *
 	 * @return array tca tables
 	 */
-	function tx_date2cal_setWizard()
-	{
+	function tx_date2cal_setWizard() {
 		// iterate tca tables
-		foreach($GLOBALS['TCA'] as $tcaTable => $tConf)
-		{
+		foreach($GLOBALS['TCA'] as $tcaTable => $tConf) {
 			$changed = false;
 			t3lib_div::loadTCA($tcaTable);
 
+			if (!is_array($GLOBALS['TCA'][$tcaTable]['columns'])) {
+				continue;
+			}
+
 			// iterate table columns
-			foreach($GLOBALS['TCA'][$tcaTable]['columns'] as $field => $fConf)
-			{
+			foreach($GLOBALS['TCA'][$tcaTable]['columns'] as $field => $fConf) {
 				// type check
 				$type = tx_date2cal_shared::isDateOrDateTime($fConf['config']);
-				if ($type === false)
+				if ($type === false) {
 					continue;
+				}
 
 				// add calendar wizard
 				tx_date2cal_shared::addWizard($GLOBALS['TCA'][$tcaTable]['columns'][$field], $type);
@@ -123,8 +127,9 @@ class tx_date2cal_extTables
 					'\'' . $type . '\';' . "\n";
 			}
 
-			if ($changed)
+			if ($changed) {
 				$this->tcaTables[] = $tcaTable;
+			}
 		}
 	}
 
@@ -134,8 +139,7 @@ class tx_date2cal_extTables
 	 *
 	 * @return void
 	 */
-	function tx_date2cal_toDatetime()
-	{
+	function tx_date2cal_toDatetime() {
 		t3lib_div::loadTCA('tt_content');
 		$GLOBALS['TCA']['tt_content']['columns']['starttime']['config']['eval'] = 'datetime';
 		$GLOBALS['TCA']['tt_content']['columns']['starttime']['config']['size'] = 12;
@@ -165,9 +169,10 @@ $call = true;
 if ($TYPO3_LOADED_EXT['_CACHEFILE'] != '' &&
 	is_file(PATH_site . 'typo3temp/date2cal_cache.php')) {
 	$t1 = filemtime(PATH_typo3conf . $TYPO3_LOADED_EXT['_CACHEFILE'] . '_ext_tables.php');
-	$t2 = @filemtime(PATH_site . 'typo3temp/date2cal_cache.php');
-	if (($t2 + 30) > $t1)
+	$t2 = filemtime(PATH_site . 'typo3temp/date2cal_cache.php');
+	if (($t2 + 30) > $t1) {
 		$call = false;
+	}
 }
 
 // exec class

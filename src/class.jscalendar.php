@@ -27,8 +27,7 @@
  *
  * @author Stefan Galinski <stefan.galinski@gmail.com>
  */
-class JSCalendar
-{
+class JSCalendar {
 	/** array date2cal configuration */
 	var $extConfig = array();
 
@@ -49,8 +48,10 @@ class JSCalendar
 	 */
 	function &getInstance() {
 		static $instance;
-		if (!isset($instance))
+		if (!isset($instance)) {
 			$instance = new JSCalendar();
+		}
+
 		return $instance;
 	}
 
@@ -104,8 +105,9 @@ class JSCalendar
 
 		// user/group settings
 		$userProps = t3lib_BEfunc::getModTSconfig($this->pageinfo['uid'], 'tx_date2cal');
-		if (!is_array($userProps))
+		if (!is_array($userProps)) {
 			$extConfig = array_merge($extConfig, $userProps['properties']);
+		}
 
 		return $extConfig;
 	}
@@ -125,8 +127,9 @@ class JSCalendar
 	 */
 	function render($value, $name = '', $calImg = '', $helpImg = '') {
 		// generates the input field id/name if it not exists
-		if (!isset($this->config['inputField']))
+		if (!isset($this->config['inputField'])) {
 			$this->setInputField('date');
+		}
 
 		// render input field
 		$name = $name == '' ? $this->config['inputField'] : $name;
@@ -232,10 +235,11 @@ class JSCalendar
 	function setLanguage($lang='') {
 		// language detection
 		if ($lang == '') {
-			if (TYPO3_MODE == 'FE')
+			if (TYPO3_MODE == 'FE') {
 				$lang = $GLOBALS['TSFE']->config['config']['language'];
-			else
+			} else {
 				$lang = $GLOBALS['LANG']->lang;
+			}
 		}
 
 		// check availability of selected languages
@@ -250,8 +254,9 @@ class JSCalendar
 	 */
 	function setCSS($calendarCSS = 'aqua') {
 		$this->config['calendarCSS'] = $calendarCSS;
-		if (!is_file($this->config['absPath'] . 'js/jscalendar/skins/' . $calendarCSS . '/theme.css'))
+		if (!is_file($this->config['absPath'] . 'js/jscalendar/skins/' . $calendarCSS . '/theme.css')) {
 			$this->config['calendarCSS'] = 'aqua';
+		}
 	}
 
 	/**
@@ -263,8 +268,9 @@ class JSCalendar
 	 */
 	function setNLP($mode) {
 		$this->config['natLangParser'] = true;
-		if (!$mode || t3lib_div::int_from_ver(TYPO3_version) < 4001000)
+		if (!$mode || t3lib_div::int_from_ver(TYPO3_version) < 4001000) {
 			$this->config['natLangParser'] = false;
+		}
 	}
 
 	/**
@@ -291,12 +297,12 @@ class JSCalendar
 	 *
 	 * @return string javascript code
 	 */
-	function getConfigJS()
-	{
+	function getConfigJS() {
 		// generates the calendar configuration string
 		$tmp = array();
-		foreach($this->config['calConfig'] as $label => $value)
+		foreach($this->config['calConfig'] as $label => $value) {
 			$tmp[] = $label . ': ' . $value;
+		}
 		$config = implode(",\n", $tmp);
 
 		// generates the javascript code for a single instance
@@ -330,11 +336,11 @@ class JSCalendar
 	 *
 	 * @return string javascript code
 	 */
-	function getMainJS()
-	{
+	function getMainJS() {
 		// can only be called once
-		if ($this->jsSent)
+		if ($this->jsSent) {
 			return '';
+		}
 		$this->jsSent = true;
 
 		// jscalendar inclusion (javascript, languages and css)
@@ -374,21 +380,23 @@ class JSCalendar
 	 * @param string $lang language code
 	 * @return string language (appended with -utf8, fallback or same as input)
 	 */
-	function languageCheck($lang)
-	{
+	function languageCheck($lang) {
 		// convert language into an iso code
-		if (array_key_exists($lang, $this->lang->csConvObj->isoArray))
+		if (array_key_exists($lang, $this->lang->csConvObj->isoArray)) {
 			$lang = $this->lang->csConvObj->isoArray[$lang];
+		}
 
 		// check availability of utf8 encoding
 		$absPath = $this->config['absPath'] . 'js/';
 		if ($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] == 'utf-8' &&
-			is_file($absPath . 'jscalendar/lang/calendar-' . $lang . '-utf8.js'))
+			is_file($absPath . 'jscalendar/lang/calendar-' . $lang . '-utf8.js')) {
 			return $lang . '-utf8';
+		}
 
 		// check availability of iso encoding
-		if (!is_file($absPath . 'jscalendar/lang/calendar-' . $lang . '.js'))
+		if (!is_file($absPath . 'jscalendar/lang/calendar-' . $lang . '.js')) {
 			return 'en';
+		}
 
 		return $lang;
 	}

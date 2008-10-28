@@ -1,4 +1,10 @@
-07-04-08 Stefan Galinski  <stefan.galinski@gmail.com>
+28-04-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	* 7.1.1: code cleanup to fit the TYPO3 CGL
+	* 7.1.1: fixed warning in ext_tables.php if a TCA table has an empty
+	columns section
+	* 7.1.1: updated manual
+
+27-04-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	* 7.1.1: added kj_becalendar to the ignore list (Thanks to Thomas Kofler)
 	* 7.1.1: fixed popup problem with IE7 (Thanks to Patrick Gaumond)
 	* 7.1.1: updated manual

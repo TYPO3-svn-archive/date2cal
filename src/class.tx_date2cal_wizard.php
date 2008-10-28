@@ -29,8 +29,7 @@ require_once('class.jscalendar.php');
  *
  * @author Stefan Galinski <stefan.galinski@gmail.com>
  */
-class tx_date2cal_wizard
-{
+class tx_date2cal_wizard {
 	/** array contains extension configuration */
 	var $extConfig = array();
 
@@ -45,8 +44,9 @@ class tx_date2cal_wizard
 
 		// user/group settings
 		$userProps = t3lib_BEfunc::getModTSconfig($this->pageinfo['uid'], 'tx_date2cal');
-		if (!is_array($userProps))
+		if (!is_array($userProps)) {
 			$this->extConfig = array_merge($this->extConfig, $userProps['properties']);
+		}
 	}
 
 	/**
@@ -71,8 +71,9 @@ class tx_date2cal_wizard
 		$this->prepareExtConfig();
 
 		// enabling of secondary options
-		if ($this->extConfig['secOptionsAlwaysOn'])
+		if ($this->extConfig['secOptionsAlwaysOn']) {
 			$this->secOptionsOn();
+		}
 
 		// add id attributes
 		$inputId = 'data_' . $params['table'] . '_' . $params['uid'] . '_' . $params['field'];
@@ -87,27 +88,30 @@ class tx_date2cal_wizard
 
 		// datetime format
 		$JSCalendar->setDateFormat(false);
-		if ($params['wConf']['evalValue'] == 'datetime')
+		if ($params['wConf']['evalValue'] == 'datetime') {
 			$JSCalendar->setDateFormat(true);
+		}
 
 		// render calendar images
 		$params['item'] .= $JSCalendar->renderImages();
 
 		// get initialisation code of the calendar
-		if (($jsCode = $JSCalendar->getMainJS()) == '')
+		if (($jsCode = $JSCalendar->getMainJS()) == '') {
 			return '';
+		}
 
 		// set initialisation code
 		$script = basename(PATH_thisScript);
-		if (TYPO3_MODE == 'FE') // frontend mode
+		if (TYPO3_MODE == 'FE') { // frontend mode
 			$params['item'] = $jsCode . $params['item'];
-		elseif (t3lib_div::int_from_ver(TYPO3_version) >= 4000000 || $script == 'db_layout.php')
+		} elseif (t3lib_div::int_from_ver(TYPO3_version) >= 4000000 || $script == 'db_layout.php') {
 			// common for typo3 4.x and quick edit mode
 			$GLOBALS['SOBE']->doc->JScode .= $jsCode;
-		elseif (is_object($GLOBALS['SOBE']->tceforms)) // common for typo3 3.x
+		} elseif (is_object($GLOBALS['SOBE']->tceforms)) { // common for typo3 3.x
 			$GLOBALS['SOBE']->tceforms->additionalCode_pre['date2cal'] = $jsCode;
-		else // palette (doesnt work with php4)
+		} else { // palette (doesnt work with php4)
 			$pObj->additionalCode_pre['date2cal'] = $jsCode;
+		}
 
 		return '';
 	}
