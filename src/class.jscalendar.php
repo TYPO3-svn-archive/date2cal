@@ -159,8 +159,10 @@ class JSCalendar {
 	 */
 	function renderImages($calImg = '', $helpImg = '') {
 		// check images
-		$calImg = ($calImg == '' ? $this->extConfig['calImg'] : $calImg);
-		$helpImg = ($helpImg == '' ? $this->extConfig['helpImg'] : $helpImg);
+		$calImg = $GLOBALS['TSFE']->absRefPrefix .
+			($calImg == '' ? $this->extConfig['calImg'] : $calImg);
+		$helpImg = $GLOBALS['TSFE']->absRefPrefix .
+			($helpImg == '' ? $this->extConfig['helpImg'] : $helpImg);
 
 		// vertical alignment
 		$valign = TYPO3_MODE == 'FE' ? 'vertical-align: middle;' : '';
@@ -331,12 +333,13 @@ class JSCalendar {
 	}
 
 	/**
-	 * Returns the shared javascript code for all calendar instances. The function can only be
+	 * Returns the shared javascript/css code for all calendar instances. The function can only be
 	 * called once!
 	 *
+	 * @param bool $loadPrototype set to false to exclude prototype from the loading list (default: true)
 	 * @return string javascript code
 	 */
-	function getMainJS() {
+	function getMainJS($loadPrototype = true) {
 		// can only be called once
 		if ($this->jsSent) {
 			return '';
@@ -345,29 +348,40 @@ class JSCalendar {
 
 		// jscalendar inclusion (javascript, languages and css)
 		$relPath = $this->config['relPath'] . 'js/';
-		$js = '<!-- inclusion of JSCalendar -->
-			<script type="text/javascript" src="' . $relPath . 'jscalendar/calendar.js"></script>
-			<script type="text/javascript" src="' . $relPath .
-				'jscalendar/lang/calendar-en.js"></script>' . "\n";
-		if ($this->config['lang'] != 'en')
-			$js .= '<script type="text/javascript" src="' . $relPath . 'jscalendar/lang/calendar-' .
-				$this->config['lang'] . '.js"></script>' . "\n";
-		$js .= '<script type="text/javascript" src="' . $relPath .
-				'jscalendar/calendar-setup.js"></script>
-			<link rel="stylesheet" type="text/css" href="' . $relPath . 'jscalendar/skins/' .
-				$this->config['calendarCSS'] . '/theme.css" />
-			<script type="text/javascript" src="' . $relPath . 'date2cal.js"></script>' . "\n";
+		$javascriptFiles = array (
+			$relPath . 'jscalendar/calendar.js',
+			$relPath . 'jscalendar/lang/calendar-en.js',
+			$relPath . 'jscalendar/calendar-setup.js',
+			$relPath . 'date2cal.js'
+		);
+
+		// include another language (english must always be loaded)
+		if ($this->config['lang'] != 'en') {
+			$javascriptFiles[] = $relPath . 'jscalendar/lang/calendar-' .
+				$this->config['lang'] . '.js';
+		}
 
 		// natural language parser scripts
 		if ($this->config['natLangParser']) {
-			$js .= '<!-- inclusion of datetime_toolbocks.js -->
-				<script type="text/javascript" src="' . $this->config['backPath'] .
-					'typo3/contrib/prototype/prototype.js"></script>
-				<script type="text/javascript" src="' . $relPath .
-					'naturalLanguageParser.js"></script>' . "\n";
+			$javascriptFiles[] = $relPath . 'naturalLanguageParser.js';
+			if ($loadPrototype) {
+				$javascriptFiles[] = $this->config['backPath'] .
+					'typo3/contrib/prototype/prototype.js';
+			}
 		}
 
-		return $js;
+		// build html code
+		$scripts .= "\t\t\t" . '<!-- Begin Inclusion of JSCalendar and Extensions -->' . "\n";
+		foreach ($javascriptFiles as $file) {
+			$scripts .= "\t\t\t" . '<script type="text/javascript" src="' .
+				$GLOBALS['TSFE']->absRefPrefix . $file . '"></script>' . "\n";
+		}
+		$scripts .= "\t\t\t" . '<link rel="stylesheet" type="text/css" href="' .
+			$GLOBALS['TSFE']->absRefPrefix . $relPath . 'jscalendar/skins/' .
+			$this->config['calendarCSS'] . '/theme.css" />' . "\n";
+		$scripts .= "\t\t\t" . '<!-- End Inclusion of JSCalendar and Extensions -->' . "\n";
+
+		return $scripts;
 	}
 
 	/**
