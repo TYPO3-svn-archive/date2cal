@@ -44,7 +44,7 @@ class tx_date2cal_wizard {
 
 		// user/group settings
 		$userProps = t3lib_BEfunc::getModTSconfig($this->pageinfo['uid'], 'tx_date2cal');
-		if (!is_array($userProps)) {
+		if (is_array($userProps['properties'])) {
 			$this->extConfig = array_merge($this->extConfig, $userProps['properties']);
 		}
 	}

@@ -105,7 +105,7 @@ class JSCalendar {
 
 		// user/group settings
 		$userProps = t3lib_BEfunc::getModTSconfig($this->pageinfo['uid'], 'tx_date2cal');
-		if (!is_array($userProps)) {
+		if (is_array($userProps['properties'])) {
 			$extConfig = array_merge($extConfig, $userProps['properties']);
 		}
 

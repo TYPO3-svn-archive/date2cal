@@ -1,3 +1,7 @@
+29-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	* 7.1.1: fixed overriding of local user/group preferences (Thanks to Mickaël Perrin)
+	* 7.1.1: fixed some issues in the manual
+
 28-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	* 7.1.1: code cleanup to fit the TYPO3 CGL
 	* 7.1.1: fixed warning in ext_tables.php if a TCA table has an empty columns section
