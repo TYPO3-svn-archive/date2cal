@@ -1,4 +1,5 @@
 10-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	RELEASE OF VERSION 7.1.1
 	* 7.1.1: fixed "%d.%m.%Y" and "%m/%d/%Y" date formats
 	* 7.1.1: more stable calendar css code
 	* 7.1.1: fixed php error with date2cal in frontend and no backend cookie (#1955, Thanks to Robert Heel and Fabrizio Branca)
