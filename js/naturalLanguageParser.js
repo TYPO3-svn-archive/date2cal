@@ -538,7 +538,11 @@ DatetimeToolbocks.prototype = {
 	  handler: function(db, bits) {
 
 		// if config date type is set to another format, use that instead
-		if (db.getFormat() == 'mm/dd/yyyy') {
+		test = db.getFormat();
+	  	if (db.options.calendarOptions.showsTime) {
+	  		test = db.getFormat().split(' ')[1];
+		}
+	  	if (test == '%m/%d/%Y') {
 		  var mm = parseInt(bits[1], 10);
 		  var dd = parseInt(bits[2], 10);
 		} else {
@@ -597,11 +601,10 @@ DatetimeToolbocks.prototype = {
 	{
 	  re: /^(\d{1,2})-(\d{1,2})-(\d{4})$/,
 	  handler: function(db, bits) {
-	  	var test = db.getFormat();
-	  	if (db.options.calendarOptions.showsTime)
+	  	test = db.getFormat();
+	  	if (db.options.calendarOptions.showsTime) {
 	  		test = db.getFormat().split(' ')[1];
-	  	else
-	  		test = db.getFormat();
+	  	}
 	  	if (test == '%d-%m-%Y') {
 		  // if the config is set to use a different schema, then use that instead
 		  var yyyy = parseInt(bits[3], 10);
@@ -623,15 +626,16 @@ DatetimeToolbocks.prototype = {
 	{
 	  re: /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/,
 	  handler: function(db, bits) {
-		var mm = parseInt(bits[1], 10);
-		var dd = parseInt(bits[2], 10);
-
-		if ((mm - 1) > 12) {
-			real_day = mm;
-			real_month = dd;
-
-			mm = real_month;
-			dd = real_day;
+		test = db.getFormat();
+	  	if (db.options.calendarOptions.showsTime) {
+	  		test = db.getFormat().split(' ')[1];
+		}
+	  	if (test == '%d.%m.%Y') {
+			var dd = parseInt(bits[1], 10);
+			var mm = parseInt(bits[2], 10);
+		} else {
+			var mm = parseInt(bits[1], 10);
+			var dd = parseInt(bits[2], 10);
 		}
 
 		mm -= 1;

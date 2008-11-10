@@ -288,7 +288,7 @@ class JSCalendar {
 			'%m-%d-%Y' : '%d-%m-%Y';
 		$jsDate = ($time ? '%H:%M ' : '') . $jsDate;
 
-		$value = $time ? 'true' : 'false';
+		$value = ($time ? 'true' : 'false');
 		$this->setConfigOption('showsTime', $value, true);
 		$this->setConfigOption('time24', $value, true);
 		$this->setConfigOption('ifFormat', $jsDate);

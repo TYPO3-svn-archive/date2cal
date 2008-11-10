@@ -1,4 +1,8 @@
-29-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+10-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	* 7.1.1: fixed "%d.%m.%Y" and "%m/%d/%Y" date formats
+	* 7.1.1: more stable calendar css code
+
+29-10-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	* 7.1.1: added option to disable the inclusion of prototype
 	* 7.1.1: refactoring of the script generation function of the jscalendar class
 	* 7.1.1: fixed problems with the option "absRefPrefix"
@@ -6,16 +10,16 @@
 	* 7.1.1: fixed some issues in the manual
 	* 7.1.1: updated the doxyfile
 
-28-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
-	* 7.1.1: code cleanup to fit the TYPO3 CGL
+28-10-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	* 7.1.1: php code cleanup to fit the TYPO3 CGL
 	* 7.1.1: fixed warning in ext_tables.php if a TCA table has an empty columns section
 	* 7.1.1: fixed an issue with duplicate input id generation with flexforms (md5ID is used now)
 	* 7.1.1: deactivate secOptionsAlwaysOn (not needed anymore) and datetime (never worked) option by default
 	* 7.1.1: added improved french translation (Thanks to Christophe Marcoccia)
-	* 7.1.1: renamed the chinese language file to start working
+	* 7.1.1: renamed the chinese language file to get it working
 	* 7.1.1: updated manual
 
-27-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+27-10-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	* 7.1.1: added kj_becalendar to the ignore list (Thanks to Thomas Kofler)
 	* 7.1.1: fixed popup problem with IE7 (Thanks to Patrick Gaumond)
 	* 7.1.1: updated manual

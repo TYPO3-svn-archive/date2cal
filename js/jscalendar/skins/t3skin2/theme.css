@@ -15,6 +15,10 @@ div.calendar {
 	cursor: default;
 }
 
+div.calendar table {
+	margin: 0;
+}
+
 /* Header part -- contains navigation buttons and day names. */
 
 .calendar .button { /* "<<", "<", ">", ">>" buttons have this class */
