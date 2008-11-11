@@ -87,9 +87,10 @@ class tx_date2cal_wizard {
 		$JSCalendar->setInputField($inputId);
 
 		// datetime format
-		$JSCalendar->setDateFormat(false);
 		if ($params['wConf']['evalValue'] == 'datetime') {
 			$JSCalendar->setDateFormat(true);
+		} else {
+			$JSCalendar->setDateFormat(false);
 		}
 
 		// render calendar images

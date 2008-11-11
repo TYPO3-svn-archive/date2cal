@@ -1,3 +1,9 @@
+11-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	* 7.2.0: added support of TYPO3_CONF_VARS['sys']['ddmmyy']
+	* 7.2.0: added complete support of the USdateFormat option
+	* 7.2.0: added support of short years (%y) to the natural language parser
+	* 7.2.0: added support of own date formats in the jscalendar API
+
 10-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	RELEASE OF VERSION 7.1.1
 	* 7.1.1: fixed "%d.%m.%Y" and "%m/%d/%Y" date formats

@@ -664,9 +664,23 @@ DatetimeToolbocks.prototype = {
 	  re: /^(\d{1,2})-(\d{1,2})-(\d{1,2})$/,
 	  handler: function(db, bits) {
 		var d = new Date();
-		var yyyy = d.getFullYear() - (d.getFullYear() % 100) + parseInt(bits[1], 10);
-		var dd = parseInt(bits[3], 10);
-		var mm = parseInt(bits[2], 10) - 1;
+		test = db.getFormat();
+	  	if (db.options.calendarOptions.showsTime) {
+	  		test = db.getFormat().split(' ')[1];
+		}
+	  	if (test == '%d-%m-%y' || test == '%d.%m.%y') {
+	  		var yyyy = d.getFullYear() - (d.getFullYear() % 100) + parseInt(bits[3], 10);
+	  		var dd = parseInt(bits[1], 10);
+	  		var mm = parseInt(bits[2], 10) - 1;
+	  	} else if (test == '%m-%d-%y' || test == '%m.%d.%y') {
+	  		var yyyy = d.getFullYear() - (d.getFullYear() % 100) + parseInt(bits[3], 10);
+	  		var dd = parseInt(bits[2], 10);
+	  		var mm = parseInt(bits[1], 10) - 1;
+	  	} else {
+	  		var yyyy = d.getFullYear() - (d.getFullYear() % 100) + parseInt(bits[1], 10);
+	  		var dd = parseInt(bits[3], 10);
+	  		var mm = parseInt(bits[2], 10) - 1;
+	  	}
 
 		if ( db.dateInRange( yyyy, mm, dd ) ) {
 		  return db.getDateObj(yyyy, mm, dd);
@@ -743,7 +757,7 @@ DatetimeToolbocks.prototype = {
 
 	  	this.options.calendarOptions.ifFormat = this.options.format;
 		this._formatString = this.options.format.replace(/%Y/, 'yyyy').replace(/%d/,
-			'dd').replace(/%m/, 'mm').replace(/%H/, 'HH').replace(/%M/, 'MM');
+			'dd').replace(/%m/, 'mm').replace(/%H/, 'HH').replace(/%M/, 'MM').replace(/%y/, 'yy');
   },
 
   /* Takes a string, returns the index of the month matching that string,

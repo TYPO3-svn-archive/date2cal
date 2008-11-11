@@ -278,17 +278,31 @@ class JSCalendar {
 	}
 
 	/**
-	 * Sets the date format of the calendar. You can't influence the format at the moment.
-	 * It will be automatically created to the value "%d-%m-%Y" or "%m-%d-%y" with the US
-	 * setting of TYPO3.
+	 * Sets the date format of the calendar. If the format parameter isn't set, then
+	 * the default TYPO3 settings are used instead.
 	 *
 	 * @param bool $time set this option if you want to define the time
+	 * @param string $format the date format which should be used (optional)
 	 * @return void
 	 */
-	function setDateFormat($time=false) {
-		$jsDate = $GLOBALS['TYPO3_CONF_VARS']['SYS']['USdateFormat'] ?
-			'%m-%d-%Y' : '%d-%m-%Y';
-		$jsDate = ($time ? '%H:%M ' : '') . $jsDate;
+	function setDateFormat($time = false, $format = '') {
+		if ($format === '') {
+			$format = preg_replace(
+				'/([a-z])/i',
+				'%\1',
+				$GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']
+			);
+
+			# default format if ddmmyy option is empty
+			$format = ($format !== '' ? $format : '%d-%m-%Y');
+
+			# we need to switch month and day for the USdateFormat
+			if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['USdateFormat']) {
+				# contains a small hack with a temporary replacement %#
+				$format = str_replace(array('%d', '%m', '%#'), array('%#', '%d', '%m'), $format);
+			}
+		}
+		$jsDate = ($time ? '%H:%M ' : '') . $format;
 
 		$value = ($time ? 'true' : 'false');
 		$this->setConfigOption('showsTime', $value, true);
