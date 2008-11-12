@@ -646,9 +646,9 @@ DatetimeToolbocks.prototype = {
 		}
 	  }
 	},
-	// yyyy-mm-dd (ISO style)
+	// yyyy-mm-dd (ISO style) + yyyy.mm.dd
 	{
-	  re: /^(\d{4})-(\d{1,2})-(\d{1,2})$/,
+	  re: /^(\d{4})[-|\.](\d{1,2})[-|\.](\d{1,2})$/,
 	  handler: function(db, bits) {
 		var yyyy = parseInt(bits[1], 10);
 		var dd = parseInt(bits[3], 10);
@@ -659,9 +659,9 @@ DatetimeToolbocks.prototype = {
 		}
 	  }
 	},
-	// yy-mm-dd (ISO style) short year
+	// yy-mm-dd (ISO style) short year + yy.mm.dd
 	{
-	  re: /^(\d{1,2})-(\d{1,2})-(\d{1,2})$/,
+	  re: /^(\d{1,2})[-|\.](\d{1,2})[-|\.](\d{1,2})$/,
 	  handler: function(db, bits) {
 		var d = new Date();
 		test = db.getFormat();

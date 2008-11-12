@@ -207,6 +207,16 @@ class JSCalendar {
 	}
 
 	/**
+	 * Returns the value of the calendar option which is defined by the option parameter.
+	 *
+	 * @param string $option option name
+	 * @return mixed option value
+	 */
+	function getConfigOption($option) {
+		return str_replace('\'', '', $this->config['calConfig'][$option]);
+	}
+
+	/**
 	 * Sets the input field of the calendar. You doesn't need to set an input id if you want an
 	 * automatic generation of the input field via the render function. Please don't try this for
 	 * multiple instances on the same page!

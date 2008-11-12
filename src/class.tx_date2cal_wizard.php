@@ -77,21 +77,24 @@ class tx_date2cal_wizard {
 
 		// add id attributes
 		$inputId = 'data_' . $params['md5ID'];
-		$params['item'] = str_replace('<input type="checkbox"', '<input type="checkbox" ' .
-			'id="' . $inputId . '_cb"', $params['item']);
-		$params['item'] = str_replace('<input type="text"', '<input type="text" ' .
-			'id="' . $inputId . '_hr"', $params['item']);
+		$params['item'] = str_replace(
+			'<input type="checkbox"',
+			'<input type="checkbox" id="' . $inputId . '_cb"',
+			$params['item']
+		);
+		$params['item'] = str_replace(
+			'<input type="text"',
+			'<input type="text" id="' . $inputId . '_hr"',
+			$params['item']
+		);
 
 		// init jscalendar class
 		$JSCalendar = JSCalendar::getInstance();
 		$JSCalendar->setInputField($inputId);
 
 		// datetime format
-		if ($params['wConf']['evalValue'] == 'datetime') {
-			$JSCalendar->setDateFormat(true);
-		} else {
-			$JSCalendar->setDateFormat(false);
-		}
+		$format = ($GLOBALS['TYPO3_CONF_VARS']['SYS']['USdateFormat'] ? '%m-%d-%Y' : '%d-%m-%Y');
+		$JSCalendar->setDateFormat(($params['wConf']['evalValue'] == 'datetime'), $format);
 
 		// render calendar images
 		$params['item'] .= $JSCalendar->renderImages();

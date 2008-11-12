@@ -1,6 +1,12 @@
+12-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+	RELEASE OF VERSION 7.2.0
+	* 7.2.0: added function to get calendar option to the jscalendar API
+	* 7.2.0: added support of yyyy.mm.dd and yy.mm.dd formats
+	* 7.2.0: added fixed formats to the backend calendar again (d-m-Y, m-d-Y)
+
 11-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	* 7.2.0: added support of TYPO3_CONF_VARS['sys']['ddmmyy']
-	* 7.2.0: added complete support of the USdateFormat option
+	* 7.2.0: added support of the USdateFormat option in relation with ddmmyy option
 	* 7.2.0: added support of short years (%y) to the natural language parser
 	* 7.2.0: added support of own date formats in the jscalendar API
 
