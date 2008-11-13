@@ -389,11 +389,11 @@ class JSCalendar {
 
 		// natural language parser scripts
 		if ($this->config['natLangParser']) {
-			$javascriptFiles[] = $relPath . 'naturalLanguageParser.js';
 			if ($loadPrototype) {
 				$javascriptFiles[] = $this->config['backPath'] .
 					'typo3/contrib/prototype/prototype.js';
 			}
+			$javascriptFiles[] = $relPath . 'naturalLanguageParser.js';
 		}
 
 		// build html code

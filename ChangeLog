@@ -1,5 +1,9 @@
-12-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
+13-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	RELEASE OF VERSION 7.2.0
+	* 7.2.0: fixed API bug (prototype needs to be included before the natural language parser)
+	* 7.2.0: updated the manual
+
+12-11-08 Stefan Galinski  <stefan.galinski@gmail.com>
 	* 7.2.0: added function to get calendar option to the jscalendar API
 	* 7.2.0: added support of yyyy.mm.dd and yy.mm.dd formats
 	* 7.2.0: added fixed formats to the backend calendar again (d-m-Y, m-d-Y)
