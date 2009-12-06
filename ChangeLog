@@ -11,6 +11,8 @@
 	* 7.3.0: fixed that the checkbox isn't checked if a value was given
 	* 7.3.0: checkbox javascript is added directly into the html code now
 	* 7.3.0: fixed firing of the onchange event handler after adding a date with the calendar
+	* 7.3.0: added XCLASS code for the API class
+	* 7.3.0: fixed issue with empty configuration parameters in the API class
 
 05-12-09 Stefan Galinski  <stefan.galinski@gmail.com>
 	* 7.3.0: renamed folder res to resources

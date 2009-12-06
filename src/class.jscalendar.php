@@ -501,7 +501,7 @@ class JSCalendar {
 		// generates the calendar configuration string
 		$tmp = array();
 		foreach($this->calendarConfiguration['calConfig'] as $label => $value) {
-			$tmp[] = $label . ': ' . $value;
+			$tmp[] = $label . ': ' . ($value ? $value : 'null');
 		}
 		$config = implode(",\n", $tmp);
 
@@ -709,4 +709,9 @@ class JSCalendar {
 		return $language;
 	}
 }
+
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.jscalendar.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.jscalendar.php']);
+}
+
 ?>
