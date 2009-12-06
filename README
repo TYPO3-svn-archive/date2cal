@@ -1,4 +1,0 @@
-How can I generate the inline documentation of date2cal?
-
-sudo pear install PhpDocumentor
-phpdoc -d ./src/ -t doc/phpdoc/ -ue -ti Date2Calendar -s

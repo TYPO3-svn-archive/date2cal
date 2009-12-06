@@ -84,7 +84,7 @@ class tx_date2cal_extTables
 		}
 
 		$this->cache = "&lt;?php\n" . $tca . $this->cache . "?&gt;\n";
-		t3lib_div::writeFile(PATH_site . 'typo3temp/date2cal_cache.php',
+		t3lib_div::writeFile(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php',
 			html_entity_decode($this->cache));
 	}
 
@@ -167,9 +167,9 @@ class tx_date2cal_extTables
 // check if a call is needed
 $call = true;
 if ($TYPO3_LOADED_EXT['_CACHEFILE'] != '' &&
-	is_file(PATH_site . 'typo3temp/date2cal_cache.php')) {
+	is_file(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php')) {
 	$t1 = filemtime(PATH_typo3conf . $TYPO3_LOADED_EXT['_CACHEFILE'] . '_ext_tables.php');
-	$t2 = filemtime(PATH_site . 'typo3temp/date2cal_cache.php');
+	$t2 = filemtime(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
 	if (($t2 + 30) > $t1) {
 		$call = false;
 	}
@@ -180,7 +180,7 @@ if ($call) {
 	$date2cal = new tx_date2cal_extTables();
 	unset($date2cal);
 } else {
-	include_once(PATH_site . 'typo3temp/date2cal_cache.php');
+	include_once(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
 }
 
 }

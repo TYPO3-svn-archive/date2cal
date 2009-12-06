@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2006 - 2008 Stefan Galinski (stefan.galinski@gmail.com)
+*  (c) 2009 Stefan Galinski (stefan.galinski@gmail.com)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -23,30 +23,35 @@
 ***************************************************************/
 
 /**
- * JSCalendar Widget
+ * An API for rendering of a jscalendar widget with or without natural language
+ * parser support. The class consists methods that handle the complete rendering
+ * of the needed input and checkbox fields and also contains some intelligent logic for
+ * the language handling. You can use the API inside the frontend or backend.
  *
  * @author Stefan Galinski <stefan.galinski@gmail.com>
+ * @package TYPO3
+ * @subpackage date2cal
  */
 class JSCalendar {
-	/** array date2cal configuration */
-	var $extConfig = array();
+	/* @var $extConfig array date2cal configuration */
+	private $extensionConfiguration = array();
 
-	/** array calendar configuration */
-	var $config = array();
+	/* @var $config array calendar/naturalLanguageParser configuration */
+	private $calendarConfiguration = array();
 
-	/** bool prevents the object to generate the initialization javascript twice */
-	var $jsSent = false;
+	/* @var $mainJavascriptSent boolean indicates if the main javascript was already sent */
+	private $mainJavascriptSent = false;
 
-	/** object holds the language object */
-	var $lang = null;
+	/* @var $lang tslib_fe language object*/
+	private $languageHandlingInstance = null;
 
 	/**
-	 * Creates a singleton instance of JSCalendar. Its important to use only this funcion than
-	 * a direct initialization of the class! You can use this method via a static call.
+	 * This static method returns an instance of this class. It's important to use always this
+	 * method instead of a direct initialization.
 	 *
 	 * @return object instance of JSCalendar
 	 */
-	function &getInstance() {
+	public static function &getInstance() {
 		static $instance;
 		if (!isset($instance)) {
 			$instance = new JSCalendar();
@@ -58,56 +63,63 @@ class JSCalendar {
 	/**
 	 * Constructor
 	 *
-	 * @todo the natural language parser should be rewritten for i18n, time support and readability
-	 * @todo the problem with nlp and irre needs to be fixed
+	 * Initializes some internal variables and sets the basic configuration options for the
+	 * calendar and the natural language parser based upon the global extension configuration.
 	 *
 	 * @return void
 	 */
-	function JSCalendar() {
+	public function __construct() {
 		// add some paths
-		$this->config['backPath'] = $GLOBALS['BACK_PATH'] . (TYPO3_MODE == 'BE' ? '../' : '');
-		$this->config['relPath'] = $this->config['backPath'] . t3lib_extMgm::siteRelPath('date2cal');
-		$this->config['absPath'] = t3lib_extMgm::extPath('date2cal');
+		$this->calendarConfiguration['backPath'] = $GLOBALS['BACK_PATH'] .
+			(TYPO3_MODE == 'BE' ? '../' : '');
+		$this->calendarConfiguration['relPath'] = $this->calendarConfiguration['backPath'] .
+			t3lib_extMgm::siteRelPath('date2cal');
+		$this->calendarConfiguration['absPath'] = t3lib_extMgm::extPath('date2cal');
 
 		// set variable with the language object
-		$this->lang = (TYPO3_MODE == 'FE' ? $GLOBALS['TSFE'] : $GLOBALS['LANG']);
+		if (TYPO3_MODE == 'FE') {
+			$this->languageHandlingInstance = $GLOBALS['TSFE'];
+		} else {
+			$this->languageHandlingInstance = $GLOBALS['LANG'];
+		}
 
-		// read global date2cal configuration
-		$this->extConfig = $this->readGlobalConfig();
+		// read and prepare the global extension configuration
+		$this->extensionConfiguration = $this->readGlobalConfig();
 
-		// add some configuration
-		$this->setNLP($this->extConfig['natLangParser']);
-		$this->setCSS($this->extConfig['calendarCSS']);
-		$this->setLanguage($this->extConfig['lang']);
+		// default initialisation of the calendar
+		$this->setNLP($this->extensionConfiguration['natLangParser']);
+		$this->setCSS($this->extensionConfiguration['calendarCSS']);
+		$this->setLanguage($this->extensionConfiguration['lang']);
 		$this->setDateFormat();
-		$this->setConfigOption('helpPage',  $this->config['relPath'] . 'res/helpPage.html');
-		$this->setConfigOption('firstDay', $this->extConfig['firstDay'], true);
+		$this->setConfigOption('firstDay', $this->extensionConfiguration['firstDay'], true);
 	}
 
 	/**
-	 * Reads and prepareas the global date2cal configuration.
+	 * Reads and prepares the global extension configuration. We are merge any
+	 * user/group typoscript inside the namespace tx_date2cal to the configuration if we
+	 * are in backend mode.
 	 *
-	 * @return array global date2cal configuration
+	 * @return array global extension configuration with the merged user/group typoscript
 	 */
-	function readGlobalConfig() {
+	protected function readGlobalConfig() {
 		// unserialize configuration
 		$extConfig = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['date2cal']);
 
 		// get calendar image
-		$extConfig['calImg'] = t3lib_div::getFileAbsFileName($extConfig['calImg']);
-		$extConfig['calImg'] = $this->config['backPath'] .
-			substr($extConfig['calImg'], strlen(PATH_site));
+		$extConfig['calendarIcon'] = t3lib_div::getFileAbsFileName($extConfig['calendarIcon']);
+		$extConfig['calendarIcon'] = $this->calendarConfiguration['backPath'] .
+			substr($extConfig['calendarIcon'], strlen(PATH_site));
 
 		// get help image
-		$extConfig['helpImg'] = t3lib_div::getFileAbsFileName($extConfig['helpImg']);
-		$extConfig['helpImg'] = $this->config['backPath'] .
-			substr($extConfig['helpImg'], strlen(PATH_site));
+		$extConfig['helpIcon'] = t3lib_div::getFileAbsFileName($extConfig['helpIcon']);
+		$extConfig['helpIcon'] = $this->calendarConfiguration['backPath'] .
+			substr($extConfig['helpIcon'], strlen(PATH_site));
 
 		// user/group settings
 		if(TYPO3_MODE == 'BE') {
-			$userProps = t3lib_BEfunc::getModTSconfig($this->pageinfo['uid'], 'tx_date2cal');
-			if (is_array($userProps['properties'])) {
-				$extConfig = array_merge($extConfig, $userProps['properties']);
+			$userProperties = $GLOBALS['BE_USER']->getTSConfig('tx_date2cal');
+			if (is_array($userProperties['properties'])) {
+				$extConfig = array_merge($extConfig, $userProperties['properties']);
 			}
 		}
 
@@ -115,77 +127,228 @@ class JSCalendar {
 	}
 
 	/**
-	 * Renders an whole calendar input element. The name and id of the checkbox will be
-	 * 	prefixed with _cb. The id of the input field will be prefixed with _hr. If you haven't defined
-	 * the input field then it will be named "date". Please define the input field if you have
-	 * multiple calendars on the page.
+	 * Takes a pair of parameters and returns them as an html attribute string. The last
+	 * parameter can be used to append a prefix to the name and id fields before they
+	 * are converted into the attributes string.
 	 *
-	 * @see renderImage()
-	 * @param string $value default value of the input field element
-	 * @param string $name name (default is inputField coniguration setting) of the input and checkbox field (prefixed with _cb)
-	 * @param string $calImg calendar image (optional)
-	 * @param string $helpImg help image (optional)
-	 * @return string generated calendar images
+	 * @param array $parameters1 less priority parameters
+	 * @param array $parameters2 priority parameters
+	 * @param string $prefix prefix for the name and id fields if they are available
+	 * @return string attributes html string for usage inside an html node
 	 */
-	function render($value, $name = '', $calImg = '', $helpImg = '') {
-		// generates the input field id/name if it not exists
-		if (!isset($this->config['inputField'])) {
-			$this->setInputField('date');
+	protected function parametersArrays2Html($parameters1, $parameters2, $prefix) {
+		// merge the parameters
+		if (!is_array($parameters1)) {
+			$parameters1 = array();
 		}
 
+		if (!is_array($parameters2)) {
+			$parameters2 = array();
+		}
+		$parameters = array_merge($parameters1, $parameters2);
+
+		// add the prefix to name and id
+		if ($parameters['name'] != '') {
+			$parameters['name'] = $parameters['name'] . $prefix;
+		}
+
+		if ($parameters['id'] != '') {
+			$parameters['id'] = $parameters['id'] . $prefix;
+		}
+
+		// transform parameters array to an html string
+		$attributes = '';
+		foreach ($parameters as $attributeName => $attributeValue) {
+			$attributes .= $attributeName . '="' . $attributeValue . '"';
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * This method renders an whole calendar input element that consists of a checkbox,
+	 * an input field and a container for the natural language parser mode. The name and id
+	 * of the checkbox will be suffixed with _cb and the id of the input field with _hr.
+	 *
+	 * User Parameters: You can inject own attribute parameters by using the last parameter.
+	 * Each html node has it's own array with attributes. Beware that changing of the id
+	 * isn't a really good idea.
+	 *
+	 * Examples:
+	 *
+	 * $userParameters['checkboxField']['class'] = 'myClass';
+	 * $userParameters['inputField']['id'] = 'mySpecialID';
+	 * $userParameters['nlpContainer']['class'] = 'containerClass';
+	 * $userParameters['nlpMessage']['onchange'] = 'mySpecialOnClickEvent();';
+	 *
+	 * @see renderImage()
+	 * @see setInputField()
+	 *
+	 * @param string $value default value of the input field element
+	 * @param array|string $userParameters parameters of the different html nodes (see description)
+	 * @param string $calendarIcon calendar image (optional; deprecated)
+	 * @param string $helpIcon help image (optional; deprecated)
+	 *
+	 * @return string complete calendar html with fields and buttons
+	 */
+	public function render($value, $userParameters = array(), $calendarIcon = '', $helpIcon = '') {
+		// generates the input field id/name if it not exists
+		if (!isset($this->calendarConfiguration['inputField'])) {
+			$this->setInputField(md5(microtime()));
+		}
+
+		$defaultParameters = array (
+			'checkboxField' => array (
+				'name' => $this->calendarConfiguration['inputField'],
+				'class' => 'jscalendar_cb',
+				'id' => $this->calendarConfiguration['inputField']
+			),
+			'inputField' => array (
+				'name' => $this->calendarConfiguration['inputField'],
+				'class' => 'jscalendar',
+				'id' => $this->calendarConfiguration['inputField']
+			),
+			'nlpContainer' => array (
+				'id' => $this->calendarConfiguration['inputField']
+			),
+			'nlpMessage' => array (
+				'id' => $this->calendarConfiguration['inputField']
+			)
+		);
+
+		// compatibility for an old parameter
+		if (!is_array($userParameters)) {
+			if ($userParameters != '') {
+				$defaultParameters['checkboxField']['name'] = $userParameters;
+				$defaultParameters['inputField']['name'] = $userParameters;
+			}
+			
+			$userParameters = array();
+		}
+
+		// set initial value
+		if ($value != '') {
+			$defaultParameters['checkboxField']['checked'] = 'checked';
+			$defaultParameters['inputField']['value'] = $value;
+		}
+
+		// render checkbox
+		$attributes = $this->parametersArrays2Html(
+			$defaultParameters['checkboxField'],
+			$userParameters['checkboxField'],
+			'_cb'
+		);
+		$content = '<input type="checkbox" ' . $attributes . ' />';
+
 		// render input field
-		$name = $name == '' ? $this->config['inputField'] : $name;
-		$content = '<input type="checkbox" name="' . $name . '_cb" class="jscalendar_cb" ' .
-			'id ="' . $this->config['inputField'] . '_cb" ' .
-			'onclick="date2cal_setDatetime(\'' . $this->config['inputField'] . '_hr\', ' .
-			strftime($this->config['calConfig']['ifFormat']) . ');" /> ';
-		$size = $this->config['calConfig']['showsTime'] ? 16 : 10;
-		$content .= '<input type="text" size="' . $size . '" maxlength="' . $size . '" ' .
-			'name="' . $name . '" id="' .  $this->config['inputField'] . '_hr" class="jscalendar" ' .
-			'onchange="date2cal_activeDateField(\'' . $this->config['inputField'] . '_cb\', \'' .
-			$this->config['inputField'] . '_hr\');" value="' . $value . '" />';
+		$attributes = $this->parametersArrays2Html(
+			$defaultParameters['inputField'],
+			$userParameters['inputField'],
+			'_hr'
+		);
+		$content .= ' <input type="text" ' . $attributes . ' />';
 
 		// render images
-		$content .= $this->renderImages($calImg, $helpImg);
+		$content .= $this->renderImages($calendarIcon, $helpIcon, $userParameters);
+
+		// message container for the natural language parser
+		if ($this->calendarConfiguration['natLangParser']) {
+			$containerAttributes = $this->parametersArrays2Html(
+				$defaultParameters['nlpContainer'],
+				$userParameters['nlpContainer'],
+				'_msgCnt'
+			);
+
+			$messageAttributes = $this->parametersArrays2Html(
+				$defaultParameters['nlpMessage'],
+				$userParameters['nlpMessage'],
+				'_msg'
+			);
+			$content .= '<div ' . $containerAttributes . '>
+				<span ' . $messageAttributes . '>&nbsp;</span>
+			</div>';
+		}
 
 		return $content;
 	}
 
 	/**
-	 * Renders the image buttons of the calendar (= trigger) and the help button. Both
-	 * images values can fallback to the default ones if you don't want to define them.
+	 * Renders the image buttons of the calendar and the help popup. The calendar button
+	 * will be suffixed with "_trigger" and the help with "_help".
 	 *
-	 * @param string $calImg calendar image (optional)
-	 * @param string $helpImg help image (optional)
+	 * Note: This method also returns the current calendar javascript configuration. This
+	 * behaviour is deprecated and shouldn't be expected in one of the next versions.
+	 *
+	 * User Parameters: You can inject own attribute parameters by using the last parameter.
+	 * Each image has it's own array with attributes.
+	 *
+	 * Examples:
+	 * 
+	 * $userParameters['calendarImage']['class'] = 'myClass';
+	 * $userParameters['helpImage']['id'] = 'mySpecialID';
+	 *
+	 *
+	 * @param string $calendarIcon calendar image (optional)
+	 * @param string $helpIcon help image (optional)
+	 * @param array $userParameters parameters of the different image nodes (see description)
+	 * 
 	 * @return string generated calendar images
 	 */
-	function renderImages($calImg = '', $helpImg = '') {
-		// check images
-		$calImg = $GLOBALS['TSFE']->absRefPrefix .
-			($calImg == '' ? $this->extConfig['calImg'] : $calImg);
-		$helpImg = $GLOBALS['TSFE']->absRefPrefix .
-			($helpImg == '' ? $this->extConfig['helpImg'] : $helpImg);
+	public function renderImages($calendarIcon = '', $helpIcon = '', $userParameters = array()) {
+		$defaultParameters = array (
+			'calendarImage' => array (
+				'style' => 'cursor: pointer; vertical-align: middle;',
+				'class' => 'date2cal_img_cal absMiddle',
+				'id' => $this->calendarConfiguration['inputField']
+			),
+			'helpImage' => array (
+				'style' => 'cursor: pointer; vertical-align: middle;',
+				'class' => 'date2cal_img_help absMiddle',
+				'id' => $this->calendarConfiguration['inputField']
+			),
+		);
 
-		// vertical alignment
-		$valign = TYPO3_MODE == 'FE' ? 'vertical-align: middle;' : '';
+		// check images
+		$defaultParameters['calendarImage']['src'] = $GLOBALS['TSFE']->absRefPrefix .
+			($calendarIcon == '' ? $this->extensionConfiguration['calendarIcon'] : $calendarIcon);
+		$defaultParameters['helpImage']['src'] = $GLOBALS['TSFE']->absRefPrefix .
+			($helpIcon == '' ? $this->extensionConfiguration['helpIcon'] : $helpIcon);
 
 		// alt/title language labels for the images
-		$calImgTitle = $this->lang->sL('LLL:EXT:date2cal/locallang.xml:calendar_wizard');
-		$helpImgTitle = $this->lang->sL('LLL:EXT:date2cal/locallang.xml:help');
+		$calendarIconTitle = $this->languageHandlingInstance->sL(
+			'LLL:EXT:date2cal/locallang.xml:calendar_wizard'
+		);
+		$defaultParameters['calendarImage']['title'] = $calendarIconTitle;
+		$defaultParameters['calendarImage']['alt'] = $calendarIconTitle;
+
+		$helpIconTitle = $this->languageHandlingInstance->sL(
+			'LLL:EXT:date2cal/locallang.xml:help'
+		);
+		$defaultParameters['helpImage']['title'] = $helpIconTitle;
+		$defaultParameters['helpImage']['alt'] = $helpIconTitle;
+
+		$parameters = array_merge_recursive($defaultParameters, $userParameters);
 
 		// calendar trigger image
-		$content .= ' <img class="date2cal_img_cal absMiddle" src="' . $calImg . '" ' .
-			'id="' . $this->config['inputField'] . '_trigger" style="cursor: pointer; ' . $valign . '" ' .
-			'title="' . $calImgTitle . '" alt="' . $calImgTitle . '" />' . "\n";
+		$attributes = $this->parametersArrays2Html(
+			$defaultParameters['calendarImage'],
+			$userParameters['calendarImage'],
+			'_trigger'
+		);
+		$content .= ' <img ' . $attributes . ' />';
 
 		// natural language parse help image
-		if ($this->config['natLangParser']) {
-			$content .= '<img class="date2cal_img_help absMiddle" src="' . $helpImg . '" ' .
-				'id="' . $this->config['inputField'] . '_help" style="cursor: pointer; ' . $valign . '" ' .
-				'title="' . $helpImgTitle . '" alt="' . $helpImgTitle . '" />' . "\n";
+		if ($this->calendarConfiguration['natLangParser']) {
+			$attributes = $this->parametersArrays2Html(
+				$defaultParameters['helpImage'],
+				$userParameters['helpImage'],
+				'_help'
+			);
+			$content .= ' <img ' . $attributes . ' />';
 		}
 
 		// calendar javascript configuration
+		// @deprecated should be called by the render method or in the caller code
 		$content .= $this->getConfigJS();
 
 		return $content;
@@ -199,44 +362,43 @@ class JSCalendar {
 	 *
 	 * @param string $option name of the option
 	 * @param string $value value of the option
-	 * @param bool $nonString set this option if you want to set a boolean or integer
+	 * @param bool $nonString set this option if you want to add an integer or boolean value
 	 * @return void
 	 */
-	function setConfigOption($option, $value, $nonString=false) {
-		$this->config['calConfig'][$option] = !$nonString ? '\'' . $value . '\'' : $value;
+	public function setConfigOption($option, $value, $nonString=false) {
+		$this->calendarConfiguration['calConfig'][$option] =
+			(!$nonString ? '\'' . $value . '\'' : $value);
 	}
 
 	/**
 	 * Returns the value of the calendar option which is defined by the option parameter.
 	 *
 	 * @param string $option option name
-	 * @return mixed option value
+	 * @return mixed option value (without the single quotes around the strings!)
 	 */
-	function getConfigOption($option) {
-		return str_replace('\'', '', $this->config['calConfig'][$option]);
+	public function getConfigOption($option) {
+		return str_replace('\'', '', $this->calendarConfiguration['calConfig'][$option]);
 	}
 
 	/**
-	 * Sets the input field of the calendar. You doesn't need to set an input id if you want an
-	 * automatic generation of the input field via the render function. Please don't try this for
-	 * multiple instances on the same page!
+	 * Sets the input field id of the calendar.
 	 *
-	 * @param string $field special input field (will be prefixed with _hr)
+	 * @param string $field input field id
 	 * @return void
 	 */
-	function setInputField($field) {
-		$this->config['inputField'] = $field;
+	public function setInputField($field) {
+		$this->calendarConfiguration['inputField'] = $field;
 		$this->setConfigOption('inputField', $field . '_hr');
 		$this->setConfigOption('button', $field . '_trigger');
 	}
 
 	/**
-	 * Returns the input field.
+	 * Returns the input field id.
 	 *
-	 * @return string input field
+	 * @return string input field id
 	 */
-	function getInputField() {
-		return $this->config['inputField'];
+	public function getInputField() {
+		return $this->calendarConfiguration['inputField'];
 	}
 
 	/**
@@ -246,18 +408,23 @@ class JSCalendar {
 	 * @param string $lang language (let it empty for automatic detection)
 	 * @return void
 	 */
-	function setLanguage($lang='') {
+	public function setLanguage($language = '') {
 		// language detection
-		if ($lang == '') {
+		if ($language == '') {
 			if (TYPO3_MODE == 'FE') {
-				$lang = $GLOBALS['TSFE']->config['config']['language'];
+				$language = $GLOBALS['TSFE']->config['config']['language'];
 			} else {
-				$lang = $GLOBALS['LANG']->lang;
+				$language = $GLOBALS['LANG']->lang;
 			}
 		}
 
 		// check availability of selected languages
-		$this->config['lang'] = $this->languageCheck($lang);
+		$this->calendarConfiguration['nlpPatternLanguage'] =
+			$this->checkExistenceOfNlpPatternFile($language);
+		$this->calendarConfiguration['nlpHelpFileLanguage'] =
+			$this->checkExistenceOfNlpHelpFile($language);
+		$this->calendarConfiguration['lang'] =
+			$this->checkExistenceOfCalendarLanguage($language);
 	}
 
 	/**
@@ -266,37 +433,34 @@ class JSCalendar {
 	 * @param string $calendarCSS calendar css file (default: aqua)
 	 * @return void
 	 */
-	function setCSS($calendarCSS = 'aqua') {
-		$this->config['calendarCSS'] = $calendarCSS;
-		if (!is_file($this->config['absPath'] . 'js/jscalendar/skins/' . $calendarCSS . '/theme.css')) {
-			$this->config['calendarCSS'] = 'aqua';
+	public function setCSS($calendarCSS = 'aqua') {
+		$this->calendarConfiguration['calendarCSS'] = $calendarCSS;
+		$skinPath = $this->calendarConfiguration['absPath'] . 'resources/jscalendar/skins/';
+		if (!is_file($skinPath . $calendarCSS . '/theme.css')) {
+			$this->calendarConfiguration['calendarCSS'] = 'aqua';
 		}
 	}
 
 	/**
-	 * Sets the natural language parser mode. Additionaly it checks the TYPO3 version,
-	 * because the feature can only be used with TYPO3 >= 4.1.
+	 * Sets the natural language parser mode.
 	 *
-	 * @param bool $mode calendar with natural language parser mode (true)
+	 * @param bool $mode set this to true if you want to enable the natural language parser
 	 * @return void
 	 */
-	function setNLP($mode) {
-		$this->config['natLangParser'] = true;
-		if (!$mode || t3lib_div::int_from_ver(TYPO3_version) < 4001000) {
-			$this->config['natLangParser'] = false;
-		}
+	public function setNLP($mode) {
+		$this->calendarConfiguration['natLangParser'] = $mode;
 	}
 
 	/**
 	 * Sets the date format of the calendar. If the format parameter isn't set, then
-	 * the default TYPO3 settings are used instead.
+	 * the default TYPO3 settings are used instead ($GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']).
 	 *
 	 * @param bool $time set this option if you want to define the time
 	 * @param string $format the date format which should be used (optional)
 	 * @return void
 	 */
-	function setDateFormat($time = false, $format = '') {
-		if ($format === '') {
+	public function setDateFormat($time = false, $format = '') {
+		if ($format == '') {
 			$format = preg_replace(
 				'/([a-z])/i',
 				'%\1',
@@ -325,35 +489,99 @@ class JSCalendar {
 	 *
 	 * @return string javascript code
 	 */
-	function getConfigJS() {
+	public function getConfigJS() {
+		// set nlp help file language
+		$this->setConfigOption(
+			'helpPage',
+			t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR') . $this->calendarConfiguration['relPath'] .
+				'resources/naturalLanguageParser/help/' .
+				$this->calendarConfiguration['nlpHelpFileLanguage'] . '.html'
+		);
+
 		// generates the calendar configuration string
 		$tmp = array();
-		foreach($this->config['calConfig'] as $label => $value) {
+		foreach($this->calendarConfiguration['calConfig'] as $label => $value) {
 			$tmp[] = $label . ': ' . $value;
 		}
 		$config = implode(",\n", $tmp);
 
 		// generates the javascript code for a single instance
-		if ($this->config['natLangParser']) {
-			$js = '
-				<script type="text/javascript">
-					new DatetimeToolbocks ({
-						format: ' . $this->config['calConfig']['ifFormat'] . ',
-						inputName: \'' . $this->config['inputField'] . '\',
-						elementId: \'' . $this->config['inputField'] . '\',
+		$js = '<script type="text/javascript">';
+		if ($this->calendarConfiguration['natLangParser']) {
+			$js .= '
+				function initializeCalendar() {
+					NaturalLanguageParser.setup ({
+						format: ' . $this->calendarConfiguration['calConfig']['ifFormat'] . ',
+						inputName: \'' . $this->calendarConfiguration['inputField'] . '\',
+						elementId: \'' . $this->calendarConfiguration['inputField'] . '\',
 						calendarOptions: {
 							' . $config . '
 						}
 					});
-				</script>';
+				}';
 		} else {
-			$js = '
-				<script type="text/javascript">
+			$js .= '
+				function initializeCalendar() {
 					Calendar.setup ({
 						' . $config . '
 					});
-				</script>';
+				}';
 		}
+		
+		$js .= '
+			if (window.addEventListener) {
+				window.addEventListener("load", initializeCalendar, false);
+			} else if (window.attachEvent) {
+				window.attachEvent("onload", initializeCalendar);
+			}
+
+			var checkbox = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_cb");
+			var checkboxFunction = function(event) {
+				var field = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
+				if (field.value == false) {
+					field.value = ' . strftime($this->calendarConfiguration['calConfig']['ifFormat']) . ';
+				} else {
+					field.value = "";
+				}
+
+				// on IE
+				if (field.fireEvent) {
+					field.fireEvent("onchange");
+				}
+
+				// on Gecko based browsers
+				if (document.createEvent) {
+					var evt = document.createEvent("HTMLEvents");
+					if (evt.initEvent) {
+						evt.initEvent("change", true, true);
+					}
+					if (field.dispatchEvent) {
+						field.dispatchEvent(evt);
+					}
+				}
+			};
+			if (checkbox.addEventListener) {
+				checkbox.addEventListener("change", checkboxFunction, false);
+			} else if (checkbox.attachEvent) {
+				checkbox.attachEvent("onclick", checkboxFunction);
+			}
+
+			var inputField = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
+			var inputFieldFunction = function(event) {
+				var checkbox = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_cb");
+				var inputField = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
+				if (inputField.value != "") {
+					checkbox.checked = true;
+				} else {
+					checkbox.checked = false;
+				}
+			};
+			if (inputField.addEventListener) {
+				inputField.addEventListener("change", inputFieldFunction, false);
+			} else if (window.attachEvent) {
+				inputField.attachEvent("onchange", inputFieldFunction);
+			}
+			</script>';
 
 		return $js;
 	}
@@ -362,83 +590,123 @@ class JSCalendar {
 	 * Returns the shared javascript/css code for all calendar instances. The function can only be
 	 * called once!
 	 *
-	 * @param bool $loadPrototype set to false to exclude prototype from the loading list (default: true)
 	 * @return string javascript code
 	 */
-	function getMainJS($loadPrototype = true) {
+	public function getMainJS() {
 		// can only be called once
-		if ($this->jsSent) {
+		if ($this->mainJavascriptSent) {
 			return '';
 		}
-		$this->jsSent = true;
+		$this->mainJavascriptSent = true;
 
 		// jscalendar inclusion (javascript, languages and css)
-		$relPath = $this->config['relPath'] . 'js/';
+		$relPath = $this->calendarConfiguration['relPath'] . 'resources/';
 		$javascriptFiles = array (
 			$relPath . 'jscalendar/calendar.js',
 			$relPath . 'jscalendar/lang/calendar-en.js',
-			$relPath . 'jscalendar/calendar-setup.js',
-			$relPath . 'date2cal.js'
+			$relPath . 'jscalendar/calendar-setup.js'
 		);
 
 		// include another language (english must always be loaded)
-		if ($this->config['lang'] != 'en') {
+		if ($this->calendarConfiguration['lang'] != 'en') {
 			$javascriptFiles[] = $relPath . 'jscalendar/lang/calendar-' .
-				$this->config['lang'] . '.js';
+				$this->calendarConfiguration['lang'] . '.js';
 		}
 
 		// natural language parser scripts
-		if ($this->config['natLangParser']) {
-			if ($loadPrototype) {
-				$javascriptFiles[] = $this->config['backPath'] .
-					'typo3/contrib/prototype/prototype.js';
-			}
-			$javascriptFiles[] = $relPath . 'naturalLanguageParser.js';
+		if ($this->calendarConfiguration['natLangParser']) {
+			$javascriptFiles[] = $relPath . 'naturalLanguageParser/naturalLanguageParser.js';
+			$javascriptFiles[] = $relPath . 'naturalLanguageParser/patterns/' .
+				$this->calendarConfiguration['nlpPatternLanguage'] . '.js';
 		}
 
 		// build html code
-		$scripts .= "\t\t\t" . '<!-- Begin Inclusion of JSCalendar and Extensions -->' . "\n";
+		$scripts = '';
 		foreach ($javascriptFiles as $file) {
-			$scripts .= "\t\t\t" . '<script type="text/javascript" src="' .
-				$GLOBALS['TSFE']->absRefPrefix . $file . '"></script>' . "\n";
+			$scripts .= '<script type="text/javascript" ' .
+				'src="' . $GLOBALS['TSFE']->absRefPrefix . $file . '"></script>' . "\n";
 		}
-		$scripts .= "\t\t\t" . '<link rel="stylesheet" type="text/css" href="' .
-			$GLOBALS['TSFE']->absRefPrefix . $relPath . 'jscalendar/skins/' .
-			$this->config['calendarCSS'] . '/theme.css" />' . "\n";
-		$scripts .= "\t\t\t" . '<!-- End Inclusion of JSCalendar and Extensions -->' . "\n";
+		$scripts .= '<link rel="stylesheet" type="text/css" ' .
+			'href="' . $GLOBALS['TSFE']->absRefPrefix . $relPath . 'jscalendar/skins/' .
+				$this->calendarConfiguration['calendarCSS'] . '/theme.css" />' . "\n";
 
 		return $scripts;
 	}
 
 	/**
-	 * Checks the availability of a language file. The functions attends utf8
-	 * 	compatibility in the backend.
+	 * Checks the availability of a pattern file for the natural language parser and
+	 * returns the given language or the fallback "en".
 	 *
-	 * Note that the language code would be transformed into an iso code if possible. If no
-	 * translation file matches than the function returns english as fallback.
-	 *
-	 * @param string $lang language code
-	 * @return string language (appended with -utf8, fallback or same as input)
+	 * @param string $language language
+	 * @return string "en" fallback or the input parameter
 	 */
-	function languageCheck($lang) {
+	protected function checkExistenceOfNlpPatternFile($language) {
 		// convert language into an iso code
-		if (array_key_exists($lang, $this->lang->csConvObj->isoArray)) {
-			$lang = $this->lang->csConvObj->isoArray[$lang];
+		if (array_key_exists($language, $this->languageHandlingInstance->csConvObj->isoArray)) {
+			$lang = $this->languageHandlingInstance->csConvObj->isoArray[$language];
 		}
 
-		// check availability of utf8 encoding
-		$absPath = $this->config['absPath'] . 'js/';
-		if ($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] == 'utf-8' &&
-			is_file($absPath . 'jscalendar/lang/calendar-' . $lang . '-utf8.js')) {
-			return $lang . '-utf8';
-		}
+		// check availability
+		$absolutePath = $this->calendarConfiguration['absPath'] . 'resources/naturalLanguageParser/';
 
-		// check availability of iso encoding
-		if (!is_file($absPath . 'jscalendar/lang/calendar-' . $lang . '.js')) {
+		if (!is_file($absolutePath . '/patterns/' . $language . '.js')) {
 			return 'en';
 		}
 
-		return $lang;
+		return $language;
+	}
+
+	/**
+	 * Checks the availability of an help file for the natural language parser and
+	 * returns the given language or the fallback "en".
+	 *
+	 * @param string $language language
+	 * @return string "en" fallback or the input parameter
+	 */
+	protected function checkExistenceOfNlpHelpFile($language) {
+		// convert language into an iso code
+		if (array_key_exists($language, $this->languageHandlingInstance->csConvObj->isoArray)) {
+			$lang = $this->languageHandlingInstance->csConvObj->isoArray[$language];
+		}
+
+		// check availability
+		$absolutePath = $this->calendarConfiguration['absPath'] . 'resources/naturalLanguageParser/';
+
+		if (!is_file($absolutePath . 'help/' . $language . '.html')) {
+			return 'en';
+		}
+
+		return $language;
+	}
+
+	/**
+	 * Checks the availability of a language file for the jscalendar. The method takes
+	 * the utf8 mode of the backend into account and tries to use the utf8 encoded version
+	 * for the frontend.
+	 *
+	 * @param string $language language code
+	 * @return string language (appended with -utf8, "en" fallback or same as input)
+	 */
+	protected function checkExistenceOfCalendarLanguage($language) {
+		// convert language into an iso code
+		if (array_key_exists($language, $this->languageHandlingInstance->csConvObj->isoArray)) {
+			$language = $this->languageHandlingInstance->csConvObj->isoArray[$language];
+		}
+
+		// check availability of utf8 encoding for the frontend or an utf8 backend
+		$absPath = $this->calendarConfiguration['absPath'] . 'resources/jscalendar/';
+		if (($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] == 'utf-8'
+			|| TYPO3_MODE == 'FE')
+			&& is_file($absPath . 'lang/calendar-' . $language . '-utf8.js')) {
+			return $language . '-utf8';
+		}
+
+		// check availability of a non-utf8 encoding
+		if (!is_file($absPath . 'lang/calendar-' . $language . '.js')) {
+			return 'en';
+		}
+
+		return $language;
 	}
 }
 ?>
