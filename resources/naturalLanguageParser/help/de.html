@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Natural Language Parser - Hilfe</title>
+		<style type="text/css">
+		* {
+			font-family: arial, sans-serif;
+			font-size: 8pt;
+		}
+
+		table {
+			width: 100%;
+			border-spacing: 0px;
+			border: 1px solid #CACACA;
+			border-bottom: 0;
+			border-collapse: collapse;
+		}
+
+		table thead td {
+			font-weight: bold;
+			font-size: 11pt;
+		}
+
+		table thead {
+			background-color: #F9F9F9;
+			font-weight: bold;
+		}
+
+		table th {
+			background-color: #F9F9F9;
+			font-weight: bold;
+			padding: 9px;
+			border-bottom: 1px solid #CACACA;
+		}
+
+		table td {
+			padding: 6px;
+			border-bottom: 1px solid #CACACA;
+		}
+
+		table td+td,
+		table th+th {
+			border-left: 1px solid #CACACA;
+		}
+		</style>
+	</head>
+	<body onclick="window.close();">
+		<table>
+			<thead>
+				<tr>
+					<th>Eingabe</th>
+					<th>Definition</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><strong>Heute/Jetzt</strong></td>
+					<td>Heute (<strong>heu</strong> or <strong>jet</strong> funktioniert ebenfalls)</td>
+				</tr>
+				<tr>
+					<td><strong>Morgen</strong></td>
+					<td>Morgen (<strong>mor</strong> funktioniert ebenfalls)</td>
+				</tr>
+				<tr>
+					<td><strong>Gestern</strong></td>
+					<td>Gestern (<strong>ges</strong> funktioniert ebenfalls)</td>
+				</tr>
+				<tr>
+					<td><strong>11 Okt / Okt 11</strong></td>
+					<td>Der n&auml;chste 11te Okotber</td>
+				</tr>
+				<tr>
+					<td><strong>11/10/2006</strong></td>
+					<td>October 11, 2006</td>
+				</tr>
+				<tr>
+					<td><strong>11/10</strong></td>
+					<td>October 11, 2006</td>
+				</tr>
+				<tr>
+					<td><strong>2006-10-11</strong></td>
+					<td>October 11, 2006</td>
+				</tr>
+				<tr>
+					<td><strong>11-10-2006</strong></td>
+					<td>October 11, 2006</td>
+				</tr>
+				<tr>
+					<td><strong>11.10.2006</strong></td>
+					<td>October 11, 2006</td>
+				</tr>
+				<tr>
+					<td><strong>11-10</strong></td>
+					<td>October 11, 2006</td>
+				</tr>
+				<tr>
+					<td><strong>11</strong></td>
+					<td>11te Tag dieses Monats</td>
+				</tr>
+				<tr>
+					<td><strong>N&auml;chster Freitag</strong></td>
+					<td>Der n&auml;chste Freitag (<strong>n&auml;chster f</strong>, <strong>n&auml;chster fre</strong> funktioniert ebenfalls)</td>
+				</tr>
+				<tr>
+					<td><strong>Letzter Montag</strong></td>
+					<td>Der letzte Montag (<strong>letzter m</strong>, <strong>letzter mon</strong> funktioniert ebenfalls)</td>
+				</tr>
+				<tr>
+					<td><strong>N&auml;chste Woche</strong></td>
+					<td>Die n&auml;chste Woche (<strong>letzer Monat</strong> oder <strong>nächstes Jahr</strong> funktioniert ebenfalls)</td>
+				</tr>
+				<tr>
+					<td><strong>vor 3 tagen</strong></td>
+					<td>Datum vor 3 Tagen</td>
+				</tr>
+				<tr>
+					<td><strong>2 jahre von jetzt</strong></td>
+					<td>Datum in 2 Jahren</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

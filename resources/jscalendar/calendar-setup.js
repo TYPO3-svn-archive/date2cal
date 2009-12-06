@@ -60,7 +60,7 @@
  *  saying "nothing to setup".
  */
 Calendar.setup = function (params) {
-	function param_default(pname, def) { if (typeof params[pname] == "undefined") { params[pname] = def; } };
+	function param_default(pname, def) { if (typeof params[pname] == "undefined") { params[pname] = def; } }
 
 	param_default("inputField",     null);
 	param_default("displayArea",    null);
@@ -107,8 +107,22 @@ Calendar.setup = function (params) {
 		var update = (cal.dateClicked || p.electric);
 		if (update && p.inputField) {
 			p.inputField.value = cal.date.print(p.ifFormat);
-			if (typeof p.inputField.onchange == "function")
-				p.inputField.onchange();
+			
+			// on IE
+			if (p.inputField.fireEvent) {
+				p.inputField.fireEvent('onchange');
+			}
+
+			// on Gecko based browsers
+			if (document.createEvent) {
+				var evt = document.createEvent('HTMLEvents');
+				if (evt.initEvent) {
+					evt.initEvent('change', true, true);
+				}
+				if (p.inputField.dispatchEvent) {
+					p.inputField.dispatchEvent(evt);
+				}
+			}
 		}
 		if (update && p.displayArea)
 			p.displayArea.innerHTML = cal.date.print(p.daFormat);
@@ -120,7 +134,7 @@ Calendar.setup = function (params) {
 		}
 		if (update && p.singleClick && cal.dateClicked)
 			cal.callCloseHandler();
-	};
+	}
 
 	if (params.flat != null) {
 		if (typeof params.flat == "string")
