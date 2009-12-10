@@ -107,9 +107,17 @@ NaturalLanguageParser.prototype._initializeCalendar = function() {
 NaturalLanguageParser.prototype._attachEvents = function() {
 	var naturalLanguageParserInstance = this;
 
+	// kill the default possible default onchange handler of the input field
+	var staticInputFieldOnChangeCallback = this.options.calendarOptions.inputField.onchange;
+	this.options.calendarOptions.inputField.onchange = '';
+
 	// register on change event on the input field
 	var onChangeEventCallback = function(event, naturalLanguageParserInstance) {
 		naturalLanguageParserInstance.convertStringToDate();
+
+		if (staticInputFieldOnChangeCallback != undefined) {
+			eval(staticInputFieldOnChangeCallback + ";onchange();");
+		}
 	};
 
 	if (this.options.calendarOptions.inputField.addEventListener) {
@@ -136,6 +144,10 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 
 		if (keyCode == 13 || keyCode == 10) {
 			naturalLanguageParserInstance.convertStringToDate();
+
+			if (staticInputFieldOnChangeCallback != undefined) {
+				eval(staticInputFieldOnChangeCallback + ";onchange();");
+			}
 			return false;
 		}
 
@@ -263,7 +275,7 @@ NaturalLanguageParser.prototype.dateInRange = function(yyyy, mm, dd) {
 	}
 
 	// if day out of range
-	if (mm < 0 || mm > 31) {
+	if (dd < 0 || dd > 31) {
 		throw new Error(this._formatString + ' - ' + NaturalLanguageParser.l10n.invalidWeekdayValue);
 	}
 

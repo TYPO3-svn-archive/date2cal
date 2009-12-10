@@ -3,7 +3,8 @@
 	* 7.3.0: introduced option to disable the backend part of the extension
 	* 7.3.0: added backend compatibility to the natural language parser mode
 	* 7.3.0: changed the renderImages method to act as a wrapper for the combined calls to the renderCalendarImages and getConfigJS methods (deprecated method!)
-	* 7.3.0: some code cleanups
+	* 7.3.0: some code cleanups and fixes to the code
+	* 7.3.0: added support of the daFormat in the API for the natural language parser
 	* 7.3.0: updated documentation
 
 06-12-09 Stefan Galinski  <stefan.galinski@gmail.com>

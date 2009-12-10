@@ -7,8 +7,8 @@ NaturalLanguageParser.l10n = {
 	ambiguousMonth: 'Monat ist mehrdeutig',
 	invalidWeekday: 'Wochentag existiert nicht',
 	ambiguousWeekday: 'Wochentag ist mehrdeutig',
-	invalidWeekdayValue: 'Monat existiert nicht [nur 1 bis 12]',
-	invalidMonthValue: 'Wochentag existiert nicht [nur 1 bis 31]',
+	invalidWeekdayValue: 'Wochentag existiert nicht [nur 1 bis 31]',
+	invalidMonthValue: 'Monat existiert nicht [nur 1 bis 12]',
 	invalidDateString: 'Eingabe konnte nicht analysiert werden'
 };
 

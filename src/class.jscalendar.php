@@ -551,10 +551,15 @@ class JSCalendar {
 		// generates the javascript code for a single instance
 		$js = '<script type="text/javascript">';
 		if ($this->calendarConfiguration['natLangParser']) {
+			$nlpFormat = $this->calendarConfiguration['calConfig']['ifFormat'];
+			if ($this->calendarConfiguration['calConfig']['daFormat'] != '') {
+				$nlpFormat = $this->calendarConfiguration['calConfig']['daFormat'];
+			}
+
 			$js .= '
 				function initializeCalendar() {
 					NaturalLanguageParser.setup ({
-						format: ' . $this->calendarConfiguration['calConfig']['ifFormat'] . ',
+						format: ' . $nlpFormat . ',
 						inputName: \'' . $this->calendarConfiguration['inputField'] . '\',
 						elementId: \'' . $this->calendarConfiguration['inputField'] . '\',
 						calendarOptions: {
