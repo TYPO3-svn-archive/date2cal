@@ -31,21 +31,21 @@ require_once('class.jscalendar.php');
  */
 class tx_date2cal_wizard {
 	/** array contains extension configuration */
-	var $extConfig = array();
+	private $extConfig = array();
 
 	/**
 	 * Reads and prepareas the extension configuration.
 	 *
 	 * @return void
 	 */
-	function prepareExtConfig() {
+	protected function prepareExtConfig() {
 		// unserialize configuration
 		$this->extConfig = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['date2cal']);
 
 		// user/group settings
-		$userProps = t3lib_BEfunc::getModTSconfig($this->pageinfo['uid'], 'tx_date2cal');
-		if (is_array($userProps['properties'])) {
-			$this->extConfig = array_merge($this->extConfig, $userProps['properties']);
+		$userProperties = $GLOBALS['BE_USER']->getTSConfig('tx_date2cal');
+		if (is_array($userProperties['properties'])) {
+			$this->extConfig = array_merge($this->extConfig, $userProperties['properties']);
 		}
 	}
 
@@ -54,7 +54,7 @@ class tx_date2cal_wizard {
 	 *
 	 * @return void
 	 */
-	function secOptionsOn() {
+	protected function secOptionsOn() {
 		$GLOBALS['BE_USER']->pushModuleData('xMOD_alt_doc.php', array('showPalettes' => 1));
 	}
 
@@ -65,8 +65,7 @@ class tx_date2cal_wizard {
 	 * @param object $pObj TCE forms object (not needed)
 	 * @return empty string
 	 */
-	function renderWizard($params, &$pObj)
-	{
+	public function renderWizard($params, &$pObj) {
 		// load extension configuration
 		$this->prepareExtConfig();
 
@@ -88,6 +87,11 @@ class tx_date2cal_wizard {
 			$params['item']
 		);
 
+		// get rid of the default calendar image in 4.3 and above
+		if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
+			$params['item'] = preg_replace('(<img[^>]+>)', '', $params['item']);
+		}
+
 		// init jscalendar class
 		$JSCalendar = JSCalendar::getInstance();
 		$JSCalendar->setInputField($inputId);
@@ -97,11 +101,27 @@ class tx_date2cal_wizard {
 		$JSCalendar->setDateFormat(($params['wConf']['evalValue'] == 'datetime'), $format);
 
 		// render calendar images
-		$params['item'] .= $JSCalendar->renderImages();
+		$params['item'] .= $JSCalendar->renderCalendarImages();
+
+		// render the natural language parser
+		if ($JSCalendar->getNLP()) {
+			$params['item'] .= $JSCalendar->renderNaturalLanguageParser();
+		}
+
+		// get javascript for a single instance
+		$params['item'] .= $JSCalendar->getConfigJS(false);
 
 		// get initialisation code of the calendar
-		if (($jsCode = $JSCalendar->getMainJS()) == '') {
+		$jsCode = $JSCalendar->getMainJS();
+		if ($jsCode == '') {
 			return '';
+		}
+
+		// get rid of the default calendar javascript in 4.3 and above
+		if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
+			$jsCode .= '<script type="text/javascript">
+				TYPO3.TCEFORMS.convertDateFieldsToDatePicker = function() {};
+				</script>';
 		}
 
 		// set initialisation code

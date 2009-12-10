@@ -170,7 +170,7 @@ class JSCalendar {
 	 * an input field and a container for the natural language parser mode. The name and id
 	 * of the checkbox will be suffixed with _cb and the id of the input field with _hr.
 	 *
-	 * User Parameters: You can inject own attribute parameters by using the last parameter.
+	 * User Parameters: You can inject own attribute parameters by using the second parameter.
 	 * Each html node has it's own array with attributes. Beware that changing of the id
 	 * isn't a really good idea.
 	 *
@@ -206,12 +206,6 @@ class JSCalendar {
 			'inputField' => array (
 				'name' => $this->calendarConfiguration['inputField'],
 				'class' => 'jscalendar',
-				'id' => $this->calendarConfiguration['inputField']
-			),
-			'nlpContainer' => array (
-				'id' => $this->calendarConfiguration['inputField']
-			),
-			'nlpMessage' => array (
 				'id' => $this->calendarConfiguration['inputField']
 			)
 		);
@@ -253,22 +247,65 @@ class JSCalendar {
 
 		// message container for the natural language parser
 		if ($this->calendarConfiguration['natLangParser']) {
-			$containerAttributes = $this->parametersArrays2Html(
-				$defaultParameters['nlpContainer'],
-				$userParameters['nlpContainer'],
-				'_msgCnt'
-			);
-
-			$messageAttributes = $this->parametersArrays2Html(
-				$defaultParameters['nlpMessage'],
-				$userParameters['nlpMessage'],
-				'_msg'
-			);
-			$content .= '<div ' . $containerAttributes . '>
-				<span ' . $messageAttributes . '>&nbsp;</span>
-			</div>';
+			$content .= $this->renderNaturalLanguageParser($containerAttributes);
 		}
 
+		return $content;
+	}
+
+	/**
+	 * This method renders a container for the natural language parser.
+	 * You can inject own attribute parameters by using the last parameter.
+	 *
+	 * Examples:
+	 *
+	 * $userParameters['nlpContainer']['class'] = 'containerClass';
+	 * $userParameters['nlpMessage']['onchange'] = 'mySpecialOnClickEvent();';
+	 *
+	 * @param array $userParameters parameters of the different html nodes (see description)
+	 *
+	 * @return string html container for the natural language parser
+	 */
+	public function renderNaturalLanguageParser($containerAttributes = array()) {
+		$defaultParameters = array (
+			'nlpContainer' => array (
+				'id' => $this->calendarConfiguration['inputField']
+			),
+			'nlpMessage' => array (
+				'id' => $this->calendarConfiguration['inputField']
+			)
+		);
+
+		$containerAttributes = $this->parametersArrays2Html(
+			$defaultParameters['nlpContainer'],
+			$userParameters['nlpContainer'],
+			'_msgCnt'
+		);
+
+		$messageAttributes = $this->parametersArrays2Html(
+			$defaultParameters['nlpMessage'],
+			$userParameters['nlpMessage'],
+			'_msg'
+		);
+		$content .= '<div ' . $containerAttributes . '>
+			<span ' . $messageAttributes . '>&nbsp;</span>
+		</div>';
+
+		return $content;
+	}
+
+	/**
+	 * Just a wrapper that combines the calls to the renderer for the calendar images
+	 * and the javascript for single calendar instance. Shouldn't be used anymore and
+	 * exists for backwards compatibility.
+	 * 
+	 * @deprecated
+	 * @see renderCalendarImages()
+	 * @see getConfigJS
+	 */
+	public function renderImages($calendarIcon = '', $helpIcon = '', $userParameters = array()) {
+		$content = $this->renderCalendarImages($calendarIcon, $helpIcon, $userParameters);
+		$content .= $this->getConfigJS(true);
 		return $content;
 	}
 
@@ -294,7 +331,7 @@ class JSCalendar {
 	 * 
 	 * @return string generated calendar images
 	 */
-	public function renderImages($calendarIcon = '', $helpIcon = '', $userParameters = array()) {
+	public function renderCalendarImages($calendarIcon = '', $helpIcon = '', $userParameters = array()) {
 		$defaultParameters = array (
 			'calendarImage' => array (
 				'style' => 'cursor: pointer; vertical-align: middle;',
@@ -346,10 +383,6 @@ class JSCalendar {
 			);
 			$content .= ' <img ' . $attributes . ' />';
 		}
-
-		// calendar javascript configuration
-		// @deprecated should be called by the render method or in the caller code
-		$content .= $this->getConfigJS();
 
 		return $content;
 	}
@@ -452,6 +485,15 @@ class JSCalendar {
 	}
 
 	/**
+	 * Returns the current state of the natural language parser mode
+	 *
+	 * @return bool
+	 */
+	public function getNLP() {
+		return $this->calendarConfiguration['natLangParser'];
+	}
+
+	/**
 	 * Sets the date format of the calendar. If the format parameter isn't set, then
 	 * the default TYPO3 settings are used instead ($GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']).
 	 *
@@ -487,9 +529,10 @@ class JSCalendar {
 	/**
 	 * Returns the javascript configuration code for a single calendar instance.
 	 *
+	 * @param $includeCheckboxJavascript boolean includes the checkbox javascript
 	 * @return string javascript code
 	 */
-	public function getConfigJS() {
+	public function getConfigJS($includeCheckboxJavascript = true) {
 		// set nlp help file language
 		$this->setConfigOption(
 			'helpPage',
@@ -534,56 +577,61 @@ class JSCalendar {
 			} else if (window.attachEvent) {
 				window.attachEvent("onload", initializeCalendar);
 			}
+		';
 
-			var checkbox = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_cb");
-			var checkboxFunction = function(event) {
-				var field = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
-				if (field.value == false) {
-					field.value = ' . strftime($this->calendarConfiguration['calConfig']['ifFormat']) . ';
-				} else {
-					field.value = "";
-				}
-
-				// on IE
-				if (field.fireEvent) {
-					field.fireEvent("onchange");
-				}
-
-				// on Gecko based browsers
-				if (document.createEvent) {
-					var evt = document.createEvent("HTMLEvents");
-					if (evt.initEvent) {
-						evt.initEvent("change", true, true);
-					}
-					if (field.dispatchEvent) {
-						field.dispatchEvent(evt);
-					}
-				}
-			};
-			if (checkbox.addEventListener) {
-				checkbox.addEventListener("change", checkboxFunction, false);
-			} else if (checkbox.attachEvent) {
-				checkbox.attachEvent("onclick", checkboxFunction);
-			}
-
-			var inputField = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
-			var inputFieldFunction = function(event) {
+		// the checkbox javscript (should be moved into an own file...)
+		if ($includeCheckboxJavascript) {
+			$js .= '
 				var checkbox = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_cb");
-				var inputField = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
-				if (inputField.value != "") {
-					checkbox.checked = true;
-				} else {
-					checkbox.checked = false;
-				}
-			};
-			if (inputField.addEventListener) {
-				inputField.addEventListener("change", inputFieldFunction, false);
-			} else if (window.attachEvent) {
-				inputField.attachEvent("onchange", inputFieldFunction);
-			}
-			</script>';
+				var checkboxFunction = function(event) {
+					var field = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
+					if (field.value == false) {
+						field.value = ' . strftime($this->calendarConfiguration['calConfig']['ifFormat']) . ';
+					} else {
+						field.value = "";
+					}
 
-		return $js;
+					// on IE
+					if (field.fireEvent) {
+						field.fireEvent("onchange");
+					}
+
+					// on Gecko based browsers
+					if (document.createEvent) {
+						var evt = document.createEvent("HTMLEvents");
+						if (evt.initEvent) {
+							evt.initEvent("change", true, true);
+						}
+						if (field.dispatchEvent) {
+							field.dispatchEvent(evt);
+						}
+					}
+				};
+				if (checkbox.addEventListener) {
+					checkbox.addEventListener("change", checkboxFunction, false);
+				} else if (checkbox.attachEvent) {
+					checkbox.attachEvent("onclick", checkboxFunction);
+				}
+
+				var inputField = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
+				var inputFieldFunction = function(event) {
+					var checkbox = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_cb");
+					var inputField = document.getElementById("' . $this->calendarConfiguration['inputField'] . '_hr");
+					if (inputField.value != "") {
+						checkbox.checked = true;
+					} else {
+						checkbox.checked = false;
+					}
+				};
+				if (inputField.addEventListener) {
+					inputField.addEventListener("change", inputFieldFunction, false);
+				} else if (window.attachEvent) {
+					inputField.attachEvent("onchange", inputFieldFunction);
+				}
+			';
+		}
+
+		return $js . '</script>';
 	}
 
 	/**
