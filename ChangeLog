@@ -1,4 +1,5 @@
 10-12-09 Stefan Galinski  <stefan.galinski@gmail.com>
+	RELEASE OF VERSION 7.3.0
 	* 7.3.0: added 4.3 compatibility
 	* 7.3.0: introduced option to disable the backend part of the extension
 	* 7.3.0: added backend compatibility to the natural language parser mode

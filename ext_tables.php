@@ -55,7 +55,7 @@ class tx_date2cal_extTables
 	 */
 	function tx_date2cal_extTables() {
 		// init variables and configuration
-		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['date2cal']);
+		$this->extConf = $GLOBALS['date2calConfiguration'];
 		$this->extConf['extCache'] = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extCache'];
 
 		// do nothing if the backend integration isn't explicitly allowed in TYPO3 4.3 and above
@@ -169,24 +169,29 @@ class tx_date2cal_extTables
 	}
 }
 
-// check if a call is needed
-$call = true;
-if ($TYPO3_LOADED_EXT['_CACHEFILE'] != '' &&
-	is_file(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php')) {
-	$t1 = filemtime(PATH_typo3conf . $TYPO3_LOADED_EXT['_CACHEFILE'] . '_ext_tables.php');
-	$t2 = filemtime(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
-	if (($t2 + 30) > $t1) {
-		$call = false;
+// init variables and configuration
+$date2calConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['date2cal']);
+
+// do nothing if the backend integration isn't explicitly allowed in TYPO3 4.3 and above
+if ($date2calConfiguration['enableBackendIntegration']) {
+	// check if a call is needed
+	$call = true;
+	if ($TYPO3_LOADED_EXT['_CACHEFILE'] != '' &&
+		is_file(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php')) {
+		$t1 = filemtime(PATH_typo3conf . $TYPO3_LOADED_EXT['_CACHEFILE'] . '_ext_tables.php');
+		$t2 = filemtime(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
+		if (($t2 + 30) > $t1) {
+			$call = false;
+		}
+	}
+
+	// exec class
+	if ($call) {
+		$date2cal = new tx_date2cal_extTables();
+		unset($date2cal);
+	} else {
+		include_once(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
 	}
 }
-
-// exec class
-if ($call) {
-	$date2cal = new tx_date2cal_extTables();
-	unset($date2cal);
-} else {
-	include_once(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
-}
-
 }
 ?>
