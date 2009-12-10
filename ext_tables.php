@@ -48,8 +48,8 @@ class tx_date2cal_extTables
 
 	/**
 	 * Constructor
-	 * :: initializes tx_date2cal
-	 * :: loads the extension configuration
+	 * - initializes tx_date2cal
+	 * - loads the extension configuration
 	 *
 	 * @return void
 	 */
@@ -57,6 +57,11 @@ class tx_date2cal_extTables
 		// init variables and configuration
 		$this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['date2cal']);
 		$this->extConf['extCache'] = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extCache'];
+
+		// do nothing if the backend integration isn't explicitly allowed in TYPO3 4.3 and above
+		if (!$this->extConf['enableBackendIntegration']) {
+			return;
+		}
 
 		// convert end/start fields to evaluate also times
 		if ($this->extConf['datetime']) {
