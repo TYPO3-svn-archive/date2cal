@@ -1,6 +1,9 @@
 # cat=basic/; type=options[aqua,t3skin,t3skin2,skin_grey2]; label=Calendar Theme; Theme of the calendar
 calendarCSS = aqua
 
+# cat=basic/enable; type=boolean; label=Integration into the Backend: Use this calendar as an replacement for the default variant that was introduced in 4.3.
+enableBackendIntegration = true
+
 # cat=basic/enable; type=boolean; label=First Week Day; Enabled - Monday (default); Disabled - Sunday
 firstDay = true
 

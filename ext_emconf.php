@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Date2Calendar',
-	'description' => 'Extends all backend date/datetime fields with a calendar (http://www.dynarch.com/projects/calendar). The calendar provides an additional natural language parsing mode which is based on http://datetime.toolbocks.com/. The usage in other extension is supported by a small API.',
+	'description' => 'Extends all backend date/datetime fields with a calendar in relation with a natural language parser. The usage in other extension is supported by an API.',
 	'category' => 'be',
 	'shy' => 0,
 	'version' => '7.2.0',
@@ -21,7 +21,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'priority' => 'bottom',
 	'loadOrder' => '',
 	'module' => '',
-	'state' => 'beta',
+	'state' => 'stable',
 	'uploadfolder' => 0,
 	'createDirs' => '',
 	'modify_tables' => '',
