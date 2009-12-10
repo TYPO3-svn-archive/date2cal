@@ -21,7 +21,6 @@
 NaturalLanguageParser = function(options) {
 	// default options of natural language parser and jscalendar
 	this.options = {
-		inputValue : false,
 		inputName : 'NaturalLanguageParser',
 		elementId : 'NaturalLanguageParser',
 		elementIdSuffixInput : '_hr',
@@ -393,7 +392,6 @@ NaturalLanguageParser.windowOpenCenter = function(url, name){
  *
  * Natural language parser options:
  *
- * - inputValue: ??? (default: false)
  * - inputName: name of the input field (default: nlp)
  * - elementId: main part of each calendar id (default: nlp)
  * - elementIdSuffixInput: suffix id of the input field (default: _hr),
