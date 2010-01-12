@@ -65,4 +65,8 @@ class tx_date2cal_shared {
 	}
 }
 
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_shared.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_shared.php']);
+}
+
 ?>
