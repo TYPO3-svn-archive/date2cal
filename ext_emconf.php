@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext "date2cal".
 #
-# Auto generated 12-01-2010 22:43
+# Auto generated 12-01-2010 22:45
 #
 # Manual updates:
 # Only the data in the array - everything else is removed by next
@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Extends all backend date/datetime fields with a calendar in relation with a natural language parser. The usage in other extension is supported by an API.',
 	'category' => 'be',
 	'shy' => 0,
-	'version' => '7.3.0',
+	'version' => '7.3.1',
 	'dependencies' => '',
 	'conflicts' => 'erotea_date2cal,kj_becalendar',
 	'priority' => 'bottom',
