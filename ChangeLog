@@ -2,6 +2,7 @@
 	* 7.3.1: added creation information of the typo3temp directory tx_date2cal to the ext_emconf.php file
 	* 7.3.1: updated copyright year
 	* 7.3.1: added missing xclass inclusion codes
+	* 7.3.1: updated the manual to the new format
 
 10-12-09 Stefan Galinski  <stefan.galinski@gmail.com>
 	RELEASE OF VERSION 7.3.0
