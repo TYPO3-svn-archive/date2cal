@@ -92,6 +92,55 @@ NaturalLanguageParser.prototype._configureOptions = function() {
 	if (this.options.showHelp) {
 		this.options.helpField = this.options.elementId + this.options.elementIdSuffixHelp;
 	}
+
+	// add an additional pattern as a first item that parses the currently wanted format
+	var pattern = this.options.format.replace(/%Y/, '(\\d{4})').replace(/%d/,
+		'(\\d{1,2})').replace(/%m/, '(\\d{1,2})').replace(/%y/, '(\\d{1,2})');
+
+	var currentFormat = {
+		re: new RegExp(pattern, 'i'),
+		handler: function(db, bits) {
+			// fetch first occurences of the year, month and day format strings
+			var occurences = [];
+			occurences.month = db.options.format.indexOf('%m');
+			occurences.day = db.options.format.indexOf('%d');
+			occurences.shortYear = db.options.format.indexOf('%y');
+			occurences.year = db.options.format.indexOf('%Y');
+
+			// sort the stuff
+			var keyMap = ['month', 'day', 'shortYear', 'year'];
+			keyMap.sort(function(a, b) {
+				return (occurences[a] - occurences[b]);
+			});
+
+			// init variables
+			var yyyy = 0;
+			var mm = 0;
+			var dd = 0;
+			var date = new Date();
+
+			// calculate day
+			if (occurences.day != -1) {
+				dd = parseInt(bits[keyMap.indexOf('day')], 10);
+			}
+
+			if (occurences.month != -1) {
+				mm = parseInt(bits[keyMap.indexOf('month')], 10) - 1;
+			}
+
+			if (occurences.shortYear != -1) {
+				yyyy = date.getFullYear() - (date.getFullYear() % 100) +
+					parseInt(bits[keyMap.indexOf('shortYear')], 10);
+			}
+
+			if (occurences.year != -1) {
+				yyyy = parseInt(bits[keyMap.indexOf('year')], 10);
+			}
+
+			return db.getDateObj(yyyy, mm, dd);
+		}
+	}
+	this._dateParsePatterns.unshift(currentFormat);
 };
 
 /**
@@ -123,13 +172,13 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 	if (this.options.calendarOptions.inputField.addEventListener) {
 		this.options.calendarOptions.inputField.addEventListener(
 			'change',
-			function(event) { onChangeEventCallback(event, naturalLanguageParserInstance); },
+			function(event) {onChangeEventCallback(event, naturalLanguageParserInstance);},
 			false
 		);
 	} else if (this.options.calendarOptions.inputField.attachEvent) {
 		this.options.calendarOptions.inputField.attachEvent(
 			'onchange',
-			function(event) { onChangeEventCallback(event, naturalLanguageParserInstance); }
+			function(event) {onChangeEventCallback(event, naturalLanguageParserInstance);}
 		);
 	}
 
@@ -157,13 +206,13 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 	if (this.options.calendarOptions.inputField.addEventListener) {
 		this.options.calendarOptions.inputField.addEventListener(
 			'keypress',
-			function(event) { onKeyPressEventCallback(event, naturalLanguageParserInstance); },
+			function(event) {onKeyPressEventCallback(event, naturalLanguageParserInstance);},
 			false
 		);
 	} else if (this.options.calendarOptions.inputField.attachEvent) {
 		this.options.calendarOptions.inputField.attachEvent(
 			'onkeypress',
-			function(event) { onKeyPressEventCallback(event, naturalLanguageParserInstance); }
+			function(event) {onKeyPressEventCallback(event, naturalLanguageParserInstance);}
 		);
 	}
 
@@ -180,13 +229,13 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 		if (this.options.helpField.addEventListener) {
 			this.options.helpField.addEventListener(
 				'click',
-				function(event) { openHelpPage(event, naturalLanguageParserInstance); },
+				function(event) {openHelpPage(event, naturalLanguageParserInstance);},
 				false
 			);
 		} else if (this.options.helpField.attachEvent) {
 			this.options.helpField.attachEvent(
 				'onclick',
-				function(event) { openHelpPage(event, naturalLanguageParserInstance); }
+				function(event) {openHelpPage(event, naturalLanguageParserInstance);}
 			);
 		}
 	}
@@ -265,8 +314,7 @@ NaturalLanguageParser.prototype.getFormat = function() {
 };
 
 /**
- * Given a year, month, and day, perform sanity checks to make
- * sure the date is sane.
+ * Performs sanity checks on the year, month and day to make sure the date is sane.
  */
 NaturalLanguageParser.prototype.dateInRange = function(yyyy, mm, dd) {
 	// if month out of range
@@ -282,7 +330,7 @@ NaturalLanguageParser.prototype.dateInRange = function(yyyy, mm, dd) {
 	return true;
 };
 
-/*
+/**
  * Takes date parameters and returns a javascript date object...
  */
 NaturalLanguageParser.prototype.getDateObj = function(yyyy, mm, dd) {
@@ -301,14 +349,13 @@ NaturalLanguageParser.prototype.getDateObj = function(yyyy, mm, dd) {
 };
 
 /**
- * Take a string and run it through the dateParsePatterns.
+ * Takes a string and run it through the dateParsePatterns.
  * The first one that succeeds will return a Date object.
  */
 NaturalLanguageParser.prototype.parseDateString = function(inputValue) {
-	var dateParsePatterns = this._dateParsePatterns;
-	for (var i = 0; i < dateParsePatterns.length; ++i) {
-		var re = dateParsePatterns[i].re;
-		var handler = dateParsePatterns[i].handler;
+	for (var i = 0; i < this._dateParsePatterns.length; ++i) {
+		var re = this._dateParsePatterns[i].re;
+		var handler = this._dateParsePatterns[i].handler;
 		var bits = re.exec(inputValue);
 		if (bits) {
 			return handler(this, bits);
@@ -319,7 +366,7 @@ NaturalLanguageParser.prototype.parseDateString = function(inputValue) {
 };
 
 /**
- * Put an extra 0 in front of single digit integers.
+ * Puts an extra 0 in front of single digit integers.
  */
 NaturalLanguageParser.prototype.zeroPad = function(integer) {
 	if (integer < 10) {
@@ -386,7 +433,7 @@ NaturalLanguageParser.prototype.convertStringToDate = function() {
  */
 NaturalLanguageParser.windowOpenCenter = function(url, name){
 	var width = 500;
-	var height = 500;
+	var height = 550;
 	var left = parseInt((screen.availWidth / 2) - (width / 2));
 	var top = parseInt((screen.availHeight / 2) - (height / 2));
 	var windowFeatures = "width=" + width + ",height=" + height +

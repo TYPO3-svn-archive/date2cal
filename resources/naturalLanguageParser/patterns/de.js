@@ -63,6 +63,20 @@ NaturalLanguageParser.prototype._dateParsePatterns = [
 			return d;
 		}
 	},
+	// +2 / -2
+	{
+		re: /^(\+|-)(\d{1,4})/i,
+		handler: function(db, bits) {
+			var d = new Date();
+			if (bits[1] == '+') {
+				d.setDate(d.getDate() + parseInt(bits[2]));
+			} else {
+				d.setDate(d.getDate() - parseInt(bits[2]));
+			}
+
+			return d;
+		}
+	},
 	// 4te
 	{
 		re: /^(\d{1,2})(?:te)?$/i,

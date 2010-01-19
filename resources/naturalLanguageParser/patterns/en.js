@@ -7,8 +7,8 @@ NaturalLanguageParser.l10n = {
 	ambiguousMonth: 'Ambiguous month',
 	invalidWeekday: 'Invalid weekday string',
 	ambiguousWeekday: 'Ambiguous weekday',
-	invalidWeekdayValue: 'Invalid month value [only 1 to 12]',
-	invalidMonthValue: 'Invalid weekday value [only 1 to 31]',
+	invalidWeekdayValue: 'Invalid weekday value [only 1 to 31]',
+	invalidMonthValue: 'Invalid month value [only 1 to 12]',
 	invalidDateString: 'Inserted string could not be parsed'
 };
 
@@ -60,6 +60,20 @@ NaturalLanguageParser.prototype._dateParsePatterns = [
 		handler: function(db, bits) {
 			var d = new Date();
 			d.setDate(d.getDate() - 1);
+			return d;
+		}
+	},
+	// +2 / -2
+	{
+		re: /^(\+|-)(\d{1,4})/i,
+		handler: function(db, bits) {
+			var d = new Date();
+			if (bits[1] == '+') {
+				d.setDate(d.getDate() + parseInt(bits[2]));
+			} else {
+				d.setDate(d.getDate() - parseInt(bits[2]));
+			}
+
 			return d;
 		}
 	},

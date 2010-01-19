@@ -1,3 +1,10 @@
+19-01-10 Stefan Galinski  <stefan.galinski@gmail.com>
+	* 7.3.2: fixed some issues inside the natural language parser helpfiles
+	* 7.3.2: fixed wrong english error message
+	* 7.3.2: added the current wanted format as a first pattern in all languages, because the current format should always be available! (#5976)
+	* 7.3.2: added +2, -3 days parser patterns (#2391)
+	* 7.3.2: increaded help window height to 550px
+
 12-01-10 Stefan Galinski  <stefan.galinski@gmail.com>
 	RELEASE OF VERSION 7.3.1
 	* 7.3.1: added creation information of the typo3temp directory tx_date2cal to the ext_emconf.php file
