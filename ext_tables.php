@@ -26,7 +26,7 @@ if (!defined('TYPO3_MODE')) {
 	die('Access denied.');
 }
 
-if (!class_exists('tx_date2cal_extTables')) {
+if (!class_exists('tx_date2cal_extTables', FALSE)) {
 
 	require_once(t3lib_extMgm::extPath('date2cal') . 'src/class.tx_date2cal_shared.php');
 
