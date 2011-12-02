@@ -88,9 +88,8 @@ class tx_date2cal_wizard {
 		);
 
 		// get rid of the default calendar image in 4.3 and above
-		// @TODO
-		if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
-			$params['item'] = preg_replace('(<img[^>]+>)', '', $params['item']);
+		if (t3lib_div::int_from_ver(TYPO3_version) >= 4004000) {
+			$params['item'] = preg_replace('(<span[^>]+>)', '', $params['item']);
 		}
 
 		// init jscalendar class
@@ -119,7 +118,6 @@ class tx_date2cal_wizard {
 		}
 
 		// get rid of the default calendar javascript in 4.3 and above
-		// @TODO
 		if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
 			$jsCode .= '<script type="text/javascript">
 				TYPO3.TCEFORMS.convertDateFieldsToDatePicker = function() {};
