@@ -176,13 +176,13 @@ if (!class_exists('tx_date2cal_extTables')) {
 		// check if a call is needed
 		$call = true;
 		/** @var $TYPO3_LOADED_EXT array */
-		if ($TYPO3_LOADED_EXT['_CACHEFILE'] != '' &&
-			is_file(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php')
-		) {
-			$t1 = filemtime(PATH_typo3conf . $TYPO3_LOADED_EXT['_CACHEFILE'] . '_ext_tables.php');
-			$t2 = filemtime(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
-			if (($t2 + 30) > $t1) {
-				$call = false;
+		if (is_file(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php')) {
+			if ($TYPO3_LOADED_EXT['_CACHEFILE'] != '') {
+				$t1 = filemtime(PATH_typo3conf . $TYPO3_LOADED_EXT['_CACHEFILE'] . '_ext_tables.php');
+				$t2 = filemtime(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php');
+				if (($t2 + 30) > $t1) {
+					$call = false;
+				}
 			}
 		}
 
