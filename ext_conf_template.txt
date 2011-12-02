@@ -24,3 +24,7 @@ calendarIcon = EXT:date2cal/resources/images/calendar.png
 
 # cat=basic/file; type=string; label=Help Icon Image: Path to the help icon image.
 helpIcon = EXT:date2cal/resources/images/helpIcon.png
+
+# cat=basic/file; type=string; label=Natural Language Parser JS lang pattern dir. Original files can be found in res directory of the extension.
+natLangParserPatternDirJS = 
+

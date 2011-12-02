@@ -86,6 +86,7 @@ class JSCalendar {
 
 		// default initialisation of the calendar
 		$this->setNLP($this->extensionConfiguration['natLangParser']);
+		$this->setNLPJS($this->extensionConfiguration['natLangParserPatternDirJS']);
 		$this->setCSS($this->extensionConfiguration['calendarCSS']);
 		$this->setLanguage($this->extensionConfiguration['lang']);
 		$this->setDateFormat();
@@ -493,6 +494,25 @@ class JSCalendar {
 	}
 
 	/**
+	 * Sets the natural language parser js files path
+	 *
+	 * @param string $dir set this to the path for the natural language parser js pattern files
+	 * @return void
+	 */
+	public function setNLPJS($dir) {
+		$this->calendarConfiguration['natLangParserPatternDirJS'] = $dir;
+	}
+
+	/**
+	 * Returns the path of the natural language parser js pattern files
+	 *
+	 * @return string
+	 */
+	public function getNLPJS() {
+		return $this->calendarConfiguration['natLangParserPatternDirJS'];
+	}
+
+	/**
 	 * Sets the date format of the calendar. If the format parameter isn't set, then
 	 * the default TYPO3 settings are used instead ($GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy']).
 	 *
@@ -668,6 +688,12 @@ class JSCalendar {
 		// natural language parser scripts
 		if ($this->calendarConfiguration['natLangParser']) {
 			$javascriptFiles[] = $relPath . 'naturalLanguageParser/naturalLanguageParser.js';
+			$jsPatternFile = '';
+			if ($jsPath = $this->getNLPJS()) 
+				$jsPatternFile = $jsPath .  $this->calendarConfiguration['nlpPatternLanguage'] . '.js';
+			if (!empty($jsPatternFile) and file_exists($jsPatternFile))
+				$javascriptFiles[] = $jsPatternFile;
+			else	
 			$javascriptFiles[] = $relPath . 'naturalLanguageParser/patterns/' .
 				$this->calendarConfiguration['nlpPatternLanguage'] . '.js';
 		}
