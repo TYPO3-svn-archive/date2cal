@@ -88,6 +88,7 @@ class tx_date2cal_wizard {
 		);
 
 		// get rid of the default calendar image in 4.3 and above
+		// @TODO
 		if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
 			$params['item'] = preg_replace('(<img[^>]+>)', '', $params['item']);
 		}
@@ -118,6 +119,7 @@ class tx_date2cal_wizard {
 		}
 
 		// get rid of the default calendar javascript in 4.3 and above
+		// @TODO
 		if (t3lib_div::int_from_ver(TYPO3_version) >= 4003000) {
 			$jsCode .= '<script type="text/javascript">
 				TYPO3.TCEFORMS.convertDateFieldsToDatePicker = function() {};
@@ -128,7 +130,7 @@ class tx_date2cal_wizard {
 		$script = basename(PATH_thisScript);
 		if (TYPO3_MODE == 'FE') { // frontend mode
 			$params['item'] = $jsCode . $params['item'];
-		} elseif (t3lib_div::int_from_ver(TYPO3_version) >= 4000000 || $script == 'db_layout.php') {
+		} elseif ($script == 'db_layout.php') {
 			// common for typo3 4.x and quick edit mode
 			$GLOBALS['SOBE']->doc->JScode .= $jsCode;
 		} elseif (is_object($GLOBALS['SOBE']->tceforms)) { // common for typo3 3.x
@@ -141,8 +143,8 @@ class tx_date2cal_wizard {
 	}
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_wizard.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_wizard.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_wizard.php']) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_wizard.php']);
 }
 
 ?>

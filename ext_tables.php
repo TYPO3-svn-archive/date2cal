@@ -175,6 +175,7 @@ if (!class_exists('tx_date2cal_extTables')) {
 	if ($date2calConfiguration['enableBackendIntegration']) {
 		// check if a call is needed
 		$call = true;
+		/** @var $TYPO3_LOADED_EXT array */
 		if ($TYPO3_LOADED_EXT['_CACHEFILE'] != '' &&
 			is_file(PATH_site . 'typo3temp/tx_date2cal/date2cal_cache.php')
 		) {

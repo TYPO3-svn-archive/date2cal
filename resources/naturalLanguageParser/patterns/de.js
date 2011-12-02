@@ -245,9 +245,7 @@ NaturalLanguageParser.prototype._dateParsePatterns = [
 
 			if ((mm - 1) > 12) {
 				var real_day = mm;
-				var real_month = dd;
-
-				mm = real_month;
+				mm = dd;
 				dd = real_day;
 			}
 

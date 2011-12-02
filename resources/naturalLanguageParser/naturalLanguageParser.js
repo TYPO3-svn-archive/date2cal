@@ -52,7 +52,7 @@ NaturalLanguageParser = function (options) {
 	}
 
 	this._formatString = 'yyyy-mm-dd';
-}
+};
 
 // current version
 NaturalLanguageParser.prototype.VERSION = '1.0.0';
@@ -74,10 +74,9 @@ NaturalLanguageParser.prototype._configureOptions = function () {
 		this.options.calendarOptions.remove('align');
 
 		// if the option is set to true, then calculate the element id for the flat calendar
-		this.options.calendarOptions.flat = (this.options.calendarOptions.flat == true ?
-			this.options.elementId + this.options.elementIdSuffixFlat :
-			this.options.calendarOptions.flat
-			);
+		if (this.options.calendarOptions.flat) {
+			this.options.calendarOptions.flat = this.options.elementId + this.options.elementIdSuffixFlat;
+		}
 	}
 
 	// build elements
@@ -139,7 +138,7 @@ NaturalLanguageParser.prototype._configureOptions = function () {
 
 			return db.getDateObj(yyyy, mm, dd);
 		}
-	}
+	};
 	this._dateParsePatterns.unshift(currentFormat);
 };
 
@@ -205,7 +204,7 @@ NaturalLanguageParser.prototype._attachEvents = function () {
 		}
 
 		return true;
-	}
+	};
 
 	if (this.options.calendarOptions.inputField.addEventListener) {
 		this.options.calendarOptions.inputField.addEventListener(
@@ -497,4 +496,4 @@ NaturalLanguageParser.setup = function (options) {
 	nlp._initializeCalendar();
 	nlp.setDefaultFormatMessage();
 	nlp._attachEvents();
-}
+};

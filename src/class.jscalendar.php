@@ -49,7 +49,7 @@ class JSCalendar {
 	 * This static method returns an instance of this class. It's important to use always this
 	 * method instead of a direct initialization.
 	 *
-	 * @return object instance of JSCalendar
+	 * @return JSCalendar instance of JSCalendar
 	 */
 	public static function &getInstance() {
 		static $instance;
@@ -65,8 +65,6 @@ class JSCalendar {
 	 *
 	 * Initializes some internal variables and sets the basic configuration options for the
 	 * calendar and the natural language parser based upon the global extension configuration.
-	 *
-	 * @return void
 	 */
 	public function __construct() {
 		// add some paths
@@ -247,7 +245,7 @@ class JSCalendar {
 
 		// message container for the natural language parser
 		if ($this->calendarConfiguration['natLangParser']) {
-			$content .= $this->renderNaturalLanguageParser($containerAttributes);
+			$content .= $this->renderNaturalLanguageParser($userParameters);
 		}
 
 		return $content;
@@ -262,11 +260,10 @@ class JSCalendar {
 	 * $userParameters['nlpContainer']['class'] = 'containerClass';
 	 * $userParameters['nlpMessage']['onchange'] = 'mySpecialOnClickEvent();';
 	 *
-	 * @param array $userParameters parameters of the different html nodes (see description)
-	 *
+	 * @param array $userParameters
 	 * @return string html container for the natural language parser
 	 */
-	public function renderNaturalLanguageParser($containerAttributes = array()) {
+	public function renderNaturalLanguageParser($userParameters = array()) {
 		$defaultParameters = array(
 			'nlpContainer' => array(
 				'id' => $this->calendarConfiguration['inputField']
@@ -287,7 +284,7 @@ class JSCalendar {
 			$userParameters['nlpMessage'],
 			'_msg'
 		);
-		$content .= '<div ' . $containerAttributes . '>
+		$content = '<div ' . $containerAttributes . '>
 			<span ' . $messageAttributes . '>&nbsp;</span>
 		</div>';
 
@@ -302,6 +299,10 @@ class JSCalendar {
 	 * @deprecated
 	 * @see renderCalendarImages()
 	 * @see getConfigJS
+	 * @param string $calendarIcon
+	 * @param string $helpIcon
+	 * @param array $userParameters
+	 * @return string
 	 */
 	public function renderImages($calendarIcon = '', $helpIcon = '', $userParameters = array()) {
 		$content = $this->renderCalendarImages($calendarIcon, $helpIcon, $userParameters);
@@ -364,15 +365,13 @@ class JSCalendar {
 		$defaultParameters['helpImage']['title'] = $helpIconTitle;
 		$defaultParameters['helpImage']['alt'] = $helpIconTitle;
 
-		$parameters = array_merge_recursive($defaultParameters, $userParameters);
-
 		// calendar trigger image
 		$attributes = $this->parametersArrays2Html(
 			$defaultParameters['calendarImage'],
 			$userParameters['calendarImage'],
 			'_trigger'
 		);
-		$content .= ' <img ' . $attributes . ' />';
+		$content = ' <img ' . $attributes . ' />';
 
 		// natural language parse help image
 		if ($this->calendarConfiguration['natLangParser']) {
@@ -438,7 +437,7 @@ class JSCalendar {
 	 * Sets the language of the calendar. Includes availability checks and fallback modes
 	 * for frontend and backend.
 	 *
-	 * @param string $lang language (let it empty for automatic detection)
+	 * @param string $language language (let it empty for automatic detection)
 	 * @return void
 	 */
 	public function setLanguage($language = '') {
@@ -696,7 +695,7 @@ class JSCalendar {
 	protected function checkExistenceOfNlpPatternFile($language) {
 		// convert language into an iso code
 		if (array_key_exists($language, $this->languageHandlingInstance->csConvObj->isoArray)) {
-			$lang = $this->languageHandlingInstance->csConvObj->isoArray[$language];
+			$language = $this->languageHandlingInstance->csConvObj->isoArray[$language];
 		}
 
 		// check availability
@@ -719,7 +718,7 @@ class JSCalendar {
 	protected function checkExistenceOfNlpHelpFile($language) {
 		// convert language into an iso code
 		if (array_key_exists($language, $this->languageHandlingInstance->csConvObj->isoArray)) {
-			$lang = $this->languageHandlingInstance->csConvObj->isoArray[$language];
+			$language = $this->languageHandlingInstance->csConvObj->isoArray[$language];
 		}
 
 		// check availability
@@ -764,8 +763,8 @@ class JSCalendar {
 	}
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.jscalendar.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.jscalendar.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.jscalendar.php']) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.jscalendar.php']);
 }
 
 ?>

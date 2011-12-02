@@ -34,7 +34,7 @@ class tx_date2cal_shared {
 	 * @param array $field TCEforms field (only the part with type and eval as keys)
 	 * @return mixed "date", "datetime" or boolean false if its not a date or datetime field
 	 */
-	function isDateOrDateTime($field) {
+	public static function isDateOrDateTime($field) {
 		if ($field['type'] != 'input') {
 			return false;
 		}
@@ -57,7 +57,7 @@ class tx_date2cal_shared {
 	 * @param string $type eval type
 	 * @return void
 	 */
-	function addWizard(&$arrStruct, $type) {
+	public static function addWizard(&$arrStruct, $type) {
 		$arrStruct['config']['wizards']['calendar']['type'] = 'userFunc';
 		$arrStruct['config']['wizards']['calendar']['userFunc'] =
 			'EXT:date2cal/src/class.tx_date2cal_wizard.php:tx_date2cal_wizard->renderWizard';
@@ -65,8 +65,8 @@ class tx_date2cal_shared {
 	}
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_shared.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_shared.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_shared.php']) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_shared.php']);
 }
 
 ?>

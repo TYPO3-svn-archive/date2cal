@@ -35,13 +35,9 @@ class tx_date2cal_befunc {
 	 * It's needed to add the calendar wizard.
 	 *
 	 * @param array $dataStructArray flexform information
-	 * @param array $conf configuration of flexform fields (not needed)
-	 * @param array $row flexform informations of special file (not needed)
-	 * @param string $table table (not needed)
-	 * @param string $fieldName field (not needed)
 	 * @return void
 	 */
-	function getFlexFormDS_postProcessDS(&$dataStructArray, $conf, $row, $table, $fieldName) {
+	function getFlexFormDS_postProcessDS(&$dataStructArray) {
 		if (is_array($dataStructArray['ROOT']) && is_array($dataStructArray['ROOT']['el'])) {
 			$this->flexformNoTabs($dataStructArray);
 		} elseif (is_array($dataStructArray['sheets'])) {
@@ -97,8 +93,8 @@ class tx_date2cal_befunc {
 	}
 }
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_befunc.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_befunc.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_befunc.php']) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/date2cal/src/class.tx_date2cal_befunc.php']);
 }
 
 ?>
