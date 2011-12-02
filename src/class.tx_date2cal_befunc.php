@@ -85,7 +85,7 @@ class tx_date2cal_befunc {
 
 				// add wizard
 				tx_date2cal_shared::addWizard(
-					$dataStructArray['sheets'][$sheet]['ROOT']['el'][$field]['TCEforms'],
+					$sheetData['ROOT']['el'][$field]['TCEforms'],
 					$type
 				);
 			}
