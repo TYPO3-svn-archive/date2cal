@@ -157,7 +157,7 @@ class JSCalendar {
 		// transform parameters array to an html string
 		$attributes = '';
 		foreach ($parameters as $attributeName => $attributeValue) {
-			$attributes .= $attributeName . '="' . $attributeValue . '"';
+			$attributes .= $attributeName . '="' . $attributeValue . '" ';
 		}
 
 		return $attributes;
