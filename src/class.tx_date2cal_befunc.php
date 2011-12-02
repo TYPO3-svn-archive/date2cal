@@ -1,26 +1,26 @@
 <?php
 /***************************************************************
-*  Copyright notice
-*
-*  (c) 2010 Stefan Galinski (stefan.galinski@gmail.com)
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+ *  Copyright notice
+ *
+ *  (c) 2010 Stefan Galinski (stefan.galinski@gmail.com)
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
 require_once(t3lib_extMgm::extPath('date2cal') . 'src/class.tx_date2cal_shared.php');
 
@@ -56,7 +56,7 @@ class tx_date2cal_befunc {
 	 * @return void
 	 */
 	function flexformNoTabs(&$dataStructArray) {
-		foreach($dataStructArray['ROOT']['el'] as $field => $fConf) {
+		foreach ($dataStructArray['ROOT']['el'] as $field => $fConf) {
 			// type check
 			$type = tx_date2cal_shared::isDateOrDateTime($fConf['TCEforms']['config']);
 			if ($type === false) {
@@ -78,9 +78,9 @@ class tx_date2cal_befunc {
 	 * @return void
 	 */
 	function flexformTabbed(&$dataStructArray) {
-		foreach($dataStructArray['sheets'] as $sheet => $sheetData) {
+		foreach ($dataStructArray['sheets'] as $sheet => $sheetData) {
 			list($sheetData, $sheet) = t3lib_div::resolveSheetDefInDS($dataStructArray, $sheet);
-			foreach($sheetData['ROOT']['el'] as $field => $fConf) {
+			foreach ($sheetData['ROOT']['el'] as $field => $fConf) {
 				// type check
 				$type = tx_date2cal_shared::isDateOrDateTime($fConf['TCEforms']['config']);
 				if ($type === false) {

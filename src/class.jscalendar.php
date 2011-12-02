@@ -1,26 +1,26 @@
 <?php
 /***************************************************************
-*  Copyright notice
-*
-*  (c) 2010 Stefan Galinski (stefan.galinski@gmail.com)
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+ *  Copyright notice
+ *
+ *  (c) 2010 Stefan Galinski (stefan.galinski@gmail.com)
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
 /**
  * An API for rendering of a jscalendar widget with or without natural language
@@ -116,7 +116,7 @@ class JSCalendar {
 			substr($extConfig['helpIcon'], strlen(PATH_site));
 
 		// user/group settings
-		if(TYPO3_MODE == 'BE') {
+		if (TYPO3_MODE == 'BE') {
 			$userProperties = $GLOBALS['BE_USER']->getTSConfig('tx_date2cal');
 			if (is_array($userProperties['properties'])) {
 				$extConfig = array_merge($extConfig, $userProperties['properties']);
@@ -197,13 +197,13 @@ class JSCalendar {
 			$this->setInputField(md5(microtime()));
 		}
 
-		$defaultParameters = array (
-			'checkboxField' => array (
+		$defaultParameters = array(
+			'checkboxField' => array(
 				'name' => $this->calendarConfiguration['inputField'],
 				'class' => 'jscalendar_cb',
 				'id' => $this->calendarConfiguration['inputField']
 			),
-			'inputField' => array (
+			'inputField' => array(
 				'name' => $this->calendarConfiguration['inputField'],
 				'class' => 'jscalendar',
 				'id' => $this->calendarConfiguration['inputField']
@@ -216,7 +216,7 @@ class JSCalendar {
 				$defaultParameters['checkboxField']['name'] = $userParameters;
 				$defaultParameters['inputField']['name'] = $userParameters;
 			}
-			
+
 			$userParameters = array();
 		}
 
@@ -267,11 +267,11 @@ class JSCalendar {
 	 * @return string html container for the natural language parser
 	 */
 	public function renderNaturalLanguageParser($containerAttributes = array()) {
-		$defaultParameters = array (
-			'nlpContainer' => array (
+		$defaultParameters = array(
+			'nlpContainer' => array(
 				'id' => $this->calendarConfiguration['inputField']
 			),
-			'nlpMessage' => array (
+			'nlpMessage' => array(
 				'id' => $this->calendarConfiguration['inputField']
 			)
 		);
@@ -298,7 +298,7 @@ class JSCalendar {
 	 * Just a wrapper that combines the calls to the renderer for the calendar images
 	 * and the javascript for single calendar instance. Shouldn't be used anymore and
 	 * exists for backwards compatibility.
-	 * 
+	 *
 	 * @deprecated
 	 * @see renderCalendarImages()
 	 * @see getConfigJS
@@ -320,7 +320,7 @@ class JSCalendar {
 	 * Each image has it's own array with attributes.
 	 *
 	 * Examples:
-	 * 
+	 *
 	 * $userParameters['calendarImage']['class'] = 'myClass';
 	 * $userParameters['helpImage']['id'] = 'mySpecialID';
 	 *
@@ -328,17 +328,17 @@ class JSCalendar {
 	 * @param string $calendarIcon calendar image (optional)
 	 * @param string $helpIcon help image (optional)
 	 * @param array $userParameters parameters of the different image nodes (see description)
-	 * 
+	 *
 	 * @return string generated calendar images
 	 */
 	public function renderCalendarImages($calendarIcon = '', $helpIcon = '', $userParameters = array()) {
-		$defaultParameters = array (
-			'calendarImage' => array (
+		$defaultParameters = array(
+			'calendarImage' => array(
 				'style' => 'cursor: pointer; vertical-align: middle;',
 				'class' => 'date2cal_img_cal absMiddle',
 				'id' => $this->calendarConfiguration['inputField']
 			),
-			'helpImage' => array (
+			'helpImage' => array(
 				'style' => 'cursor: pointer; vertical-align: middle;',
 				'class' => 'date2cal_img_help absMiddle',
 				'id' => $this->calendarConfiguration['inputField']
@@ -398,7 +398,7 @@ class JSCalendar {
 	 * @param bool $nonString set this option if you want to add an integer or boolean value
 	 * @return void
 	 */
-	public function setConfigOption($option, $value, $nonString=false) {
+	public function setConfigOption($option, $value, $nonString = false) {
 		$this->calendarConfiguration['calConfig'][$option] =
 			(!$nonString ? '\'' . $value . '\'' : $value);
 	}
@@ -543,7 +543,7 @@ class JSCalendar {
 
 		// generates the calendar configuration string
 		$tmp = array();
-		foreach($this->calendarConfiguration['calConfig'] as $label => $value) {
+		foreach ($this->calendarConfiguration['calConfig'] as $label => $value) {
 			$tmp[] = $label . ': ' . ($value ? $value : 'null');
 		}
 		$config = implode(",\n", $tmp);
@@ -575,7 +575,7 @@ class JSCalendar {
 					});
 				}';
 		}
-		
+
 		$js .= '
 			if (window.addEventListener) {
 				window.addEventListener("load", initializeCalendar, false);
@@ -654,7 +654,7 @@ class JSCalendar {
 
 		// jscalendar inclusion (javascript, languages and css)
 		$relPath = $this->calendarConfiguration['relPath'] . 'resources/';
-		$javascriptFiles = array (
+		$javascriptFiles = array(
 			$relPath . 'jscalendar/calendar.js',
 			$relPath . 'jscalendar/lang/calendar-en.js',
 			$relPath . 'jscalendar/calendar-setup.js'
@@ -681,7 +681,7 @@ class JSCalendar {
 		}
 		$scripts .= '<link rel="stylesheet" type="text/css" ' .
 			'href="' . $GLOBALS['TSFE']->absRefPrefix . $relPath . 'jscalendar/skins/' .
-				$this->calendarConfiguration['calendarCSS'] . '/theme.css" />' . "\n";
+			$this->calendarConfiguration['calendarCSS'] . '/theme.css" />' . "\n";
 
 		return $scripts;
 	}
@@ -750,7 +750,8 @@ class JSCalendar {
 		$absPath = $this->calendarConfiguration['absPath'] . 'resources/jscalendar/';
 		if (($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] == 'utf-8'
 			|| TYPO3_MODE == 'FE')
-			&& is_file($absPath . 'lang/calendar-' . $language . '-utf8.js')) {
+			&& is_file($absPath . 'lang/calendar-' . $language . '-utf8.js')
+		) {
 			return $language . '-utf8';
 		}
 

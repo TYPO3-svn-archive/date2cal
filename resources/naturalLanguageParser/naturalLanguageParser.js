@@ -18,22 +18,22 @@
 //      None
 /////////////////////////////////////////////////////////////////////////////////////
 
-NaturalLanguageParser = function(options) {
+NaturalLanguageParser = function (options) {
 	// default options of natural language parser and jscalendar
 	this.options = {
-		inputName : 'NaturalLanguageParser',
-		elementId : 'NaturalLanguageParser',
-		elementIdSuffixInput : '_hr',
-		elementIdSuffixCheckbox : '_cb',
-		elementIdSuffixMessage : '_msg',
-		elementIdSuffixHtmlContainer : '_msgCnt',
-		elementIdSuffixHelp : '_help',
-		elementIdSuffixButton : '_trigger',
-		elementIdSuffixFlat : '_flat',
-		classNameError : 'error',
-		classNameSuccess : 'success',
-		showHelp : true,
-		format : 'iso',
+		inputName: 'NaturalLanguageParser',
+		elementId: 'NaturalLanguageParser',
+		elementIdSuffixInput: '_hr',
+		elementIdSuffixCheckbox: '_cb',
+		elementIdSuffixMessage: '_msg',
+		elementIdSuffixHtmlContainer: '_msgCnt',
+		elementIdSuffixHelp: '_help',
+		elementIdSuffixButton: '_trigger',
+		elementIdSuffixFlat: '_flat',
+		classNameError: 'error',
+		classNameSuccess: 'success',
+		showHelp: true,
+		format: 'iso',
 
 		calendarOptions: {
 			align: 'Br'
@@ -60,7 +60,7 @@ NaturalLanguageParser.prototype.VERSION = '1.0.0';
 /**
  * Configures the options and evaluates them
  */
-NaturalLanguageParser.prototype._configureOptions = function() {
+NaturalLanguageParser.prototype._configureOptions = function () {
 	// set date format of the jscalendar
 	this.options.calendarOptions.ifFormat = this.options.format;
 
@@ -77,7 +77,7 @@ NaturalLanguageParser.prototype._configureOptions = function() {
 		this.options.calendarOptions.flat = (this.options.calendarOptions.flat == true ?
 			this.options.elementId + this.options.elementIdSuffixFlat :
 			this.options.calendarOptions.flat
-		);
+			);
 	}
 
 	// build elements
@@ -99,7 +99,7 @@ NaturalLanguageParser.prototype._configureOptions = function() {
 
 	var currentFormat = {
 		re: new RegExp(pattern, 'i'),
-		handler: function(db, bits) {
+		handler: function (db, bits) {
 			// fetch first occurences of the year, month and day format strings
 			var occurences = [];
 			occurences.month = db.options.format.indexOf('%m');
@@ -109,7 +109,7 @@ NaturalLanguageParser.prototype._configureOptions = function() {
 
 			// sort the stuff
 			var keyMap = ['month', 'day', 'shortYear', 'year'];
-			keyMap.sort(function(a, b) {
+			keyMap.sort(function (a, b) {
 				return (occurences[a] - occurences[b]);
 			});
 
@@ -146,14 +146,14 @@ NaturalLanguageParser.prototype._configureOptions = function() {
 /**
  * Initializes the jscalendar
  */
-NaturalLanguageParser.prototype._initializeCalendar = function() {
+NaturalLanguageParser.prototype._initializeCalendar = function () {
 	Calendar.setup(this.options.calendarOptions);
 };
 
 /**
  * Adds the key observer, onchange and onclick events to the elements...
  */
-NaturalLanguageParser.prototype._attachEvents = function() {
+NaturalLanguageParser.prototype._attachEvents = function () {
 	var naturalLanguageParserInstance = this;
 
 	// kill the default possible default onchange handler of the input field
@@ -161,7 +161,7 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 	this.options.calendarOptions.inputField.onchange = '';
 
 	// register on change event on the input field
-	var onChangeEventCallback = function(event, naturalLanguageParserInstance) {
+	var onChangeEventCallback = function (event, naturalLanguageParserInstance) {
 		naturalLanguageParserInstance.convertStringToDate();
 
 		if (staticInputFieldOnChangeCallback != undefined) {
@@ -172,18 +172,22 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 	if (this.options.calendarOptions.inputField.addEventListener) {
 		this.options.calendarOptions.inputField.addEventListener(
 			'change',
-			function(event) {onChangeEventCallback(event, naturalLanguageParserInstance);},
+			function (event) {
+				onChangeEventCallback(event, naturalLanguageParserInstance);
+			},
 			false
 		);
 	} else if (this.options.calendarOptions.inputField.attachEvent) {
 		this.options.calendarOptions.inputField.attachEvent(
 			'onchange',
-			function(event) {onChangeEventCallback(event, naturalLanguageParserInstance);}
+			function (event) {
+				onChangeEventCallback(event, naturalLanguageParserInstance);
+			}
 		);
 	}
 
 	// register onkeypress event on the input field
-	var onKeyPressEventCallback = function(event, naturalLanguageParserInstance) {
+	var onKeyPressEventCallback = function (event, naturalLanguageParserInstance) {
 		var keyCode = '';
 		if (event.keyCode) {
 			keyCode = event.keyCode;
@@ -206,19 +210,23 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 	if (this.options.calendarOptions.inputField.addEventListener) {
 		this.options.calendarOptions.inputField.addEventListener(
 			'keypress',
-			function(event) {onKeyPressEventCallback(event, naturalLanguageParserInstance);},
+			function (event) {
+				onKeyPressEventCallback(event, naturalLanguageParserInstance);
+			},
 			false
 		);
 	} else if (this.options.calendarOptions.inputField.attachEvent) {
 		this.options.calendarOptions.inputField.attachEvent(
 			'onkeypress',
-			function(event) {onKeyPressEventCallback(event, naturalLanguageParserInstance);}
+			function (event) {
+				onKeyPressEventCallback(event, naturalLanguageParserInstance);
+			}
 		);
 	}
 
 	// add the event for when a user clicks on the help icon
 	if (this.options.showHelp) {
-		var openHelpPage = function(event, naturalLanguageParserInstance) {
+		var openHelpPage = function (event, naturalLanguageParserInstance) {
 			NaturalLanguageParser.windowOpenCenter(
 				naturalLanguageParserInstance.options.calendarOptions.helpPage,
 				'NaturalLanguageParserHelp'
@@ -229,13 +237,17 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 		if (this.options.helpField.addEventListener) {
 			this.options.helpField.addEventListener(
 				'click',
-				function(event) {openHelpPage(event, naturalLanguageParserInstance);},
+				function (event) {
+					openHelpPage(event, naturalLanguageParserInstance);
+				},
 				false
 			);
 		} else if (this.options.helpField.attachEvent) {
 			this.options.helpField.attachEvent(
 				'onclick',
-				function(event) {openHelpPage(event, naturalLanguageParserInstance);}
+				function (event) {
+					openHelpPage(event, naturalLanguageParserInstance);
+				}
 			);
 		}
 	}
@@ -244,7 +256,7 @@ NaturalLanguageParser.prototype._attachEvents = function() {
 /**
  * Adds the default format message to the message container
  */
-NaturalLanguageParser.prototype.setDefaultFormatMessage = function() {
+NaturalLanguageParser.prototype.setDefaultFormatMessage = function () {
 	document.getElementById(this.options.messageField).innerHTML = this._formatString;
 };
 
@@ -252,8 +264,8 @@ NaturalLanguageParser.prototype.setDefaultFormatMessage = function() {
  * Takes a string, returns the index of the month matching that string,
  * throws an error if 0 or more than 1 matches
  */
-NaturalLanguageParser.prototype.parseMonth = function(month) {
-	var matches = NaturalLanguageParser.prototype._monthNames.findAll(function(item) {
+NaturalLanguageParser.prototype.parseMonth = function (month) {
+	var matches = NaturalLanguageParser.prototype._monthNames.findAll(function (item) {
 		return new RegExp("^" + month, "i").test(item);
 	});
 
@@ -271,8 +283,8 @@ NaturalLanguageParser.prototype.parseMonth = function(month) {
 /**
  * Same as parseMonth but for days of the week
  */
-NaturalLanguageParser.prototype.parseWeekday = function(weekday) {
-	var matches = NaturalLanguageParser.prototype._weekdayNames.findAll(function(item) {
+NaturalLanguageParser.prototype.parseWeekday = function (weekday) {
+	var matches = NaturalLanguageParser.prototype._weekdayNames.findAll(function (item) {
 		return new RegExp("^" + weekday, "i").test(item);
 	});
 
@@ -283,14 +295,14 @@ NaturalLanguageParser.prototype.parseWeekday = function(weekday) {
 	if (matches.length > 1) {
 		throw new Error(this._formatString + ' - ' + NaturalLanguageParser.l10n.ambiguousWeekday);
 	}
-	
+
 	return NaturalLanguageParser.prototype._weekdayNames.indexOf(matches[0]);
 };
 
 /**
  * Returns the current date format
  */
-NaturalLanguageParser.prototype.getFormat = function() {
+NaturalLanguageParser.prototype.getFormat = function () {
 	var format = '';
 	switch (this.options.format) {
 		case 'de':
@@ -316,7 +328,7 @@ NaturalLanguageParser.prototype.getFormat = function() {
 /**
  * Performs sanity checks on the year, month and day to make sure the date is sane.
  */
-NaturalLanguageParser.prototype.dateInRange = function(yyyy, mm, dd) {
+NaturalLanguageParser.prototype.dateInRange = function (yyyy, mm, dd) {
 	// if month out of range
 	if (mm < 0 || mm > 11) {
 		throw new Error(this._formatString + ' - ' + NaturalLanguageParser.l10n.invalidMonthValue);
@@ -333,7 +345,7 @@ NaturalLanguageParser.prototype.dateInRange = function(yyyy, mm, dd) {
 /**
  * Takes date parameters and returns a javascript date object...
  */
-NaturalLanguageParser.prototype.getDateObj = function(yyyy, mm, dd) {
+NaturalLanguageParser.prototype.getDateObj = function (yyyy, mm, dd) {
 	if (this.dateInRange(yyyy, mm, dd)) {
 		var date = new Date();
 
@@ -352,7 +364,7 @@ NaturalLanguageParser.prototype.getDateObj = function(yyyy, mm, dd) {
  * Takes a string and run it through the dateParsePatterns.
  * The first one that succeeds will return a Date object.
  */
-NaturalLanguageParser.prototype.parseDateString = function(inputValue) {
+NaturalLanguageParser.prototype.parseDateString = function (inputValue) {
 	for (var i = 0; i < this._dateParsePatterns.length; ++i) {
 		var re = this._dateParsePatterns[i].re;
 		var handler = this._dateParsePatterns[i].handler;
@@ -368,18 +380,18 @@ NaturalLanguageParser.prototype.parseDateString = function(inputValue) {
 /**
  * Puts an extra 0 in front of single digit integers.
  */
-NaturalLanguageParser.prototype.zeroPad = function(integer) {
+NaturalLanguageParser.prototype.zeroPad = function (integer) {
 	if (integer < 10) {
-	  return '0' + integer;
+		return '0' + integer;
 	} else {
-	  return integer;
+		return integer;
 	}
 };
 
 /**
  *  Conversion of the value inside the input field...
  */
-NaturalLanguageParser.prototype.convertStringToDate = function() {
+NaturalLanguageParser.prototype.convertStringToDate = function () {
 	var inputField = this.options.calendarOptions.inputField;
 	var messageField = document.getElementById(this.options.messageField);
 
@@ -414,7 +426,7 @@ NaturalLanguageParser.prototype.convertStringToDate = function() {
 			date.setHours(hours);
 			date.setMinutes(minutes);
 			inputField.value = date.print(this.options.calendarOptions.ifFormat);
-			
+
 			message = date.toDateString();
 		}
 
@@ -431,7 +443,7 @@ NaturalLanguageParser.prototype.convertStringToDate = function() {
 /**
  * Opens a centered popup window...
  */
-NaturalLanguageParser.windowOpenCenter = function(url, name){
+NaturalLanguageParser.windowOpenCenter = function (url, name) {
 	var width = 500;
 	var height = 550;
 	var left = parseInt((screen.availWidth / 2) - (width / 2));
@@ -479,7 +491,7 @@ NaturalLanguageParser.windowOpenCenter = function(url, name){
  *
  * @param options object options of the natural language parser and the jscalendar
  */
-NaturalLanguageParser.setup = function(options) {
+NaturalLanguageParser.setup = function (options) {
 	var nlp = new NaturalLanguageParser(options);
 	nlp._configureOptions();
 	nlp._initializeCalendar();
